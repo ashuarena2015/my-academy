@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Dropdown,
   DropdownTrigger,
@@ -8,15 +8,36 @@ import {
   DropdownItem,
   User,
 } from "@heroui/react";
-import { useSelector, shallowEqual } from "react-redux";
+import { useSelector, shallowEqual, useDispatch } from "react-redux";
+import { useRouter } from 'next/navigation';
 
-import { RootState } from "../api/store";
+import { RootState, AppDispatch } from "../api/store";
 
 const UserAvatar = React.memo(() => {
   const loginUser = useSelector(
     (state: RootState) => state.users.loginUser,
     shallowEqual,
   );
+
+  const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleLogout = async () => {
+    const response = await dispatch({
+      type: "apiRequest",
+      payload: {
+        url: `user/logout`,
+        method: "GET",
+        onSuccess: "users/userLogout",
+        onError: "GLOBAL_MESSAGE",
+        dispatchType: "userLogout"
+      },
+    });
+    console.log({response});
+    if(response?.isLogout) {
+      router.push('/login');
+    }
+  }
 
   return (
     <div className="flex items-center gap-4">
@@ -44,7 +65,7 @@ const UserAvatar = React.memo(() => {
           </DropdownItem>
           <DropdownItem key="settings">My Profile</DropdownItem>
           <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
-          <DropdownItem key="logout" color="danger">
+          <DropdownItem key="logout" color="danger" onClick={handleLogout}>
             Log Out
           </DropdownItem>
         </DropdownMenu>

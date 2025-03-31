@@ -15,6 +15,7 @@ dist/
 backend/node_modules/  
 build/  
 out/  
+.next/
 
 # Editor settings  
 .vscode/  

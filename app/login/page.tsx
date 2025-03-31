@@ -3,12 +3,14 @@
 import React, { useState } from "react";
 import { Form, Input, Button, RadioGroup, Radio } from "@heroui/react";
 import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from 'next/navigation';
 
 import AlertMessage from "../components/alert";
 import { RootState, AppDispatch } from "../api/store";
 
 export default function RegisterPage() {
   const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
   const globalMessage = useSelector((state: RootState) => state.global);
 
   interface UserInputInfo {
@@ -26,7 +28,7 @@ export default function RegisterPage() {
     localStorage.setItem("loginAs", e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
@@ -35,17 +37,20 @@ export default function RegisterPage() {
       email: data.email as string,
     });
 
-    dispatch({
+    const response = await dispatch({
       type: "apiRequest",
       payload: {
         url: `user/login`,
         method: "POST",
-        onSuccess: "users/saveUserDetails",
+        onSuccess: "users/userLogin",
         onError: "GLOBAL_MESSAGE",
-        dispatchType: "saveUserDetails",
+        dispatchType: "userLogin",
         body: { userInfo: { ...data } },
       },
     });
+    if (response?.isLogin) {
+      router.push('/profile');
+    }
   };
 
   return (

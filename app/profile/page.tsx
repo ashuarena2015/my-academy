@@ -29,6 +29,10 @@ export default function ProfilePage() {
     dob: string;
     address?: string; // Added the address property
     adminRole: string;
+    phone: Number;
+    alternatePhone: Number;
+    fatherName?: string; // Added the fatherName property
+    motherName?: string; // Added the motherName property
   }
 
   const [userInputInfo, setUserInputInfo] = useState<UserInputInfo>({
@@ -38,6 +42,10 @@ export default function ProfilePage() {
     address: "",
     dob: "",
     adminRole: "",
+    phone: 0,
+    alternatePhone: 0,
+    fatherName: "",
+    motherName: "",
   });
 
   useEffect(() => {
@@ -49,6 +57,10 @@ export default function ProfilePage() {
         address: loginUser.address || "",
         dob: loginUser.dob || "",
         adminRole: loginUser?.adminRole || "",
+        phone: loginUser?.phone || "",
+        alternatePhone: loginUser?.alternatePhone || "",
+        fatherName: loginUser?.fatherName || "",
+        motherName: loginUser?.motherName || "",
       });
       setIsAdminRegister(loginUser?.adminRole === "principal");
       setChangedDob(
@@ -57,7 +69,10 @@ export default function ProfilePage() {
               parse(loginUser?.dob, "dd-MM-yyyy", new Date()),
               "yyyy-MM-dd",
             )
-          : null,
+          : format(
+            parse("01-01-1970", "dd-MM-yyyy", new Date()),
+            "yyyy-MM-dd",
+          ),
       );
     }
   }, [loginUser]);
@@ -77,6 +92,31 @@ export default function ProfilePage() {
       },
     });
   };
+
+  // const [isOtpSent, setIsOtpSent] = useState<boolean>(false);
+  // const [otpValue, setOtpValue] = useState<string>("");
+
+  // const handleOtpSend = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  //   e.preventDefault();
+  //   console.log('phone', userInputInfo?.phone);
+  //   const response = await dispatch({
+  //     type: "apiRequest",
+  //     payload: {
+  //       url: `user/send-otp`,
+  //       method: "POST",
+  //       onSuccess: "users/sendProfilePhoneOtp",
+  //       onError: "GLOBAL_MESSAGE",
+  //       dispatchType: "sendProfilePhoneOtp",
+  //       body: { 
+  //         phone: userInputInfo?.phone
+  //       },
+  //     },
+  //   });
+  //   console.log({response});
+  //   if(response?.isOtpSent) {
+  //     setIsOtpSent(true);
+  //   }
+  // };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -124,6 +164,8 @@ export default function ProfilePage() {
         />
       ) : null}
       <Form className="gap-4" id="register_form" onSubmit={handleSubmit}>
+        <h2 className="font-bold">Personal details</h2>
+        <hr className="w-full" />
         <div className="flex justify-between w-full">
           <Input
             errorMessage="Error message"
@@ -160,11 +202,11 @@ export default function ProfilePage() {
             value={userInputInfo?.email}
           />
         </div>
-        <div className="flex justify-between w-full">
+        <div className={`flex justify-between ${isAdminRegister ? 'w-full' : ''}`}>
           {isAdminRegister ? (
             <div className="flex justify-between w-full">
               <Select
-                className="w-full"
+                className="w-full mr-2"
                 defaultSelectedKeys={[userInputInfo?.adminRole]}
                 label="Role"
                 labelPlacement="outside"
@@ -181,7 +223,7 @@ export default function ProfilePage() {
           {changedDob ? (
             <DatePicker
               showMonthAndYearPickers
-              className="text-left ml-2"
+              className="text-left"
               defaultValue={
                 changedDob ? parseDate(changedDob) : parseDate("1970-01-24")
               }
@@ -198,6 +240,59 @@ export default function ProfilePage() {
               }}
             />
           ) : null}
+        </div>
+        {!userInputInfo?.adminRole ?
+        (<>
+          <h2 className="font-bold">Parent details</h2>
+          <hr className="w-full" />
+          <div className="flex justify-between w-full">
+            <Input
+              errorMessage="Error message"
+              label="Father's name"
+              labelPlacement="outside"
+              name="fatherName"
+              placeholder="Enter your father name"
+              type="text"
+              value={userInputInfo?.fatherName}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex justify-between w-full">
+            <Input
+              className="text-left"
+              errorMessage="Error message"
+              label="Mother's name"
+              labelPlacement="outside"
+              name="motherName"
+              placeholder="Enter your mother name"
+              type="text"
+              value={userInputInfo?.motherName}
+              onChange={handleChange}
+            />
+          </div>
+          </>) : null}
+        <div className="flex justify-between w-full">
+          <Input
+            errorMessage="Error message"
+            label="Phone"
+            labelPlacement="outside"
+            name="phone"
+            placeholder="93***34***"
+            type="text"
+            value={userInputInfo?.phone}
+            onChange={handleChange}
+          />
+          <Input
+            className="ml-2"
+            errorMessage="Error message"
+            label="Alternate Phone"
+            labelPlacement="outside"
+            name="alternatePhone"
+            placeholder="0120-**2***"
+            type="text"
+            value={userInputInfo?.alternatePhone}
+            onChange={handleChange}
+          />
         </div>
         <div className="flex justify-between w-full">
           <Input

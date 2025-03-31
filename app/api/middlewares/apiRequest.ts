@@ -41,26 +41,59 @@ const api =
         data: body,
       });
 
-      switch (dispatchType) {
-        case "saveUserDetails":
-          dispatch({
-            type: "global/globalMessage",
-            payload: {
-              message: "Your account has been created! Please login.",
-              type: "success",
-            },
-          });
-        case "getLoginDetails":
-          dispatch({
-            type: "users/getLoginDetails",
-            payload: {
-              user: response?.data?.user,
-            },
-          });
+      if (dispatchType === "saveUserDetails") {
+        dispatch({
+          type: "global/globalMessage",
+          payload: {
+            message: "Your account has been created! Please login.",
+            type: "success",
+          },
+        });
+      }
+      if (dispatchType === "userLogin") {
+        dispatch({
+          type: "global/globalMessage",
+          payload: {
+            message: "",
+            type: "",
+          },
+        });
+        dispatch({
+          type: "users/getLoginDetails",
+          payload: {
+            user: response?.data?.user,
+          },
+        });
 
-          return { isAuth: true };
-        default:
-          break;
+        return { isLogin: true };
+      }
+      if (dispatchType === "getLoginDetails") {
+        dispatch({
+          type: "users/getLoginDetails",
+          payload: {
+            user: response?.data?.user,
+          },
+        });
+
+        return { isAuth: true };
+      }
+      if (dispatchType === "userLogout") {
+        dispatch({
+          type: "global/globalMessage",
+          payload: {
+            message: "You are signed out!",
+            type: "success",
+          },
+        });
+
+        dispatch({
+          type: "users/getLoginDetails",
+          payload: {
+            user: {},
+          },
+        });
+
+        return { isLogout: true };
       }
     } catch (error: any) {
       dispatch({

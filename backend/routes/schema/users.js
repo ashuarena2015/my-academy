@@ -15,6 +15,10 @@ const UserSchema = new mongoose.Schema(
     dob: { type: String, required: false },
     address: { type: String, required: false },
     adminRole: { type: String, required: false },
+    phone: { type: Number, required: true },
+    alternatePhone: { type: String, required: false },
+    fatherName: { type: String, required: false },
+    motherName: { type: String, required: false },
   },
   { timestamps: true },
 );

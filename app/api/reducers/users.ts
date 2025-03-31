@@ -52,7 +52,7 @@ const usersSlice = createSlice({
     },
     logoutUser: (state) => {
       state.loginUser = {};
-    },
+    }
   },
 });
 
