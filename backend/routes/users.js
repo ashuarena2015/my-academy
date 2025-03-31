@@ -8,7 +8,6 @@ const routerUsers = express.Router();
 const jwt = require('jsonwebtoken');
 const { verifyToken } = require('./isAuth');
 const User = require('./schema/users');
-const path = require('path');
 
 routerUsers.get('/auth', verifyToken, async (req, res) => {
     try {

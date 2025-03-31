@@ -9,7 +9,7 @@ exports.verifyToken = async (req, res, next) => {
     }
     const decoded = await jwt.verify(
       token,
-      process.env.SECRET_KEY || "1234!@#%<{*&)",
+      "1234!@#%<{*&)",
     );
 
     if (!decoded) {
