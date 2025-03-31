@@ -121,7 +121,7 @@ routerUsers.post('/login', async (req, res) => {
             userId: user._id,
             email: user.email
         },
-        process.env.SECRET_KEY || "1234!@#%<{*&)",
+        "1234!@#%<{*&)",
         {
             expiresIn: "24h",
         });
