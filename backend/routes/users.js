@@ -3,32 +3,12 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 const express = require('express');
-const { ObjectId } = require('mongodb');
-const fs = require('fs');
 const bcrypt = require("bcrypt");
 const routerUsers = express.Router();
 const jwt = require('jsonwebtoken');
 const { verifyToken } = require('./isAuth');
 const User = require('./schema/users');
-const multer = require('multer');
 const path = require('path');
-// const twilio = require("twilio");
-// const OTP = require('./schema/otp');
-
-// routerUsers.get('/', verifyToken, async (req, res) => {
-//     try {
-//         const limit = parseInt(req?.query?.limit);
-//         const offset = parseInt(req?.query?.offset);
-
-//         const db = await dbConnect();
-//         const userCollection = db.collection('users');
-        
-//         const response = await userCollection.find().toArray();
-//         res.send(response.slice(offset, limit + offset));
-//     } catch (error) {
-//         res.send({error: error?.errmsg});
-//     }
-// })
 
 routerUsers.get('/auth', verifyToken, async (req, res) => {
     try {
@@ -165,50 +145,6 @@ routerUsers.post('/login', async (req, res) => {
     }
     
 })
-
-// // Twilio Credentials (Get these from Twilio Dashboard)
-// const accountSid = "AC51740bcd4e9bbedd1edad28d12c39a22";
-// const authToken = "aa15dca96b3c41f0358d51a5b157b681";
-// const twilioPhone = "+18568983326";
-
-// const client = twilio(accountSid, authToken);
-
-// routerUsers.post("/send-otp", async (req, res) => {
-//     const { phone } = req.body;
-//     console.log('req.body', req.body);
-//     if (!phone) return res.status(400).json({ error: "Phone number is required" });
-  
-//     const otp = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit OTP
-//     console.log(`Generated OTP: ${otp}`); // For debugging
-  
-//     await OTP.create({ phone, otp }); // Store OTP in DB
-  
-//     // Send OTP via Twilio
-//     try {
-//       await client.messages.create({
-//         body: `Your OTP code is ${otp}`,
-//         from: twilioPhone,
-//         to: phone,
-//       });
-//       res.json({ message: "OTP sent successfully" });
-//     } catch (error) {
-//       res.status(500).json({ error: "Failed to send OTP" });
-//     }
-// });
-
-// // 📌 2️⃣ Verify OTP
-// routerUsers.post("/verify-otp", async (req, res) => {
-//     const { phone, otp } = req.body;
-//     if (!phone || !otp) return res.status(400).json({ error: "Phone and OTP are required" });
-  
-//     const otpEntry = await OTP.findOne({ phone, otp });
-  
-//     if (!otpEntry) return res.status(400).json({ error: "Invalid or expired OTP" });
-  
-//     await OTP.deleteOne({ phone }); // Delete OTP after verification
-  
-//     res.json({ message: "OTP verified successfully" });
-// });
 
 routerUsers.get("/logout", (req, res) => {
     res.clearCookie("auth", { httpOnly: true, secure: true, sameSite: "Strict" });
