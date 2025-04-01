@@ -1,15 +1,22 @@
 "use client";
 
+import React, { useMemo } from "react";
 import UsersCount from "../components/usersCountWidget";
 import StudentsList from "../components/Students/StudentsList";
 
-export default function DashboardPage() {
+const DashboardPage = () => {
+  // Memoize components to prevent unnecessary re-renders
+  const MemoizedUsersCount = React.memo(UsersCount);
+  const MemoizedStudentsList = React.memo(StudentsList);
+
   return (
     <div>
-      <UsersCount />
+      <MemoizedUsersCount />
       <div className="mt-5">
-        <StudentsList />
+        <MemoizedStudentsList />
       </div>
     </div>
   );
 }
+
+export default React.memo(DashboardPage);

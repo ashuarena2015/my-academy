@@ -2,6 +2,7 @@
 
 import { FC } from "react";
 import { Listbox, ListboxItem, cn } from "@heroui/react";
+import { useRouter } from "next/navigation";
 
 import { siteConfig } from "@/config/site";
 
@@ -14,6 +15,8 @@ const SideBar: FC = () => {
       {children}
     </div>
   );
+
+  const router = useRouter();
 
   const getMenuIcon = (
     iconName: string,
@@ -201,6 +204,7 @@ const SideBar: FC = () => {
                 {getMenuIcon(item.icon, { className: "text-lg p-1" })}
               </IconWrapper>
             }
+            onPressEnd={() => router.push(item.href)}
           >
             {item?.label}
           </ListboxItem>

@@ -2,6 +2,7 @@ import React from "react";
 import { Card, CardHeader, Avatar, Button } from "@heroui/react";
 
 const UserCount = () => {
+  console.log('UserCount');
   return (
     <div className="gap-4 justify-between grid grid-cols-2">
       <Card className="">

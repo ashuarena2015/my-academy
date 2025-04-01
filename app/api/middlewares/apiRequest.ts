@@ -79,14 +79,6 @@ const api =
       }
       if (dispatchType === "userLogout") {
         dispatch({
-          type: "global/globalMessage",
-          payload: {
-            message: "You are signed out!",
-            type: "success",
-          },
-        });
-
-        dispatch({
           type: "users/getLoginDetails",
           payload: {
             user: {},
@@ -96,13 +88,15 @@ const api =
         return { isLogout: true };
       }
     } catch (error: any) {
-      dispatch({
-        type: "global/globalMessage",
-        payload: {
-          message: error.response?.data?.message || "Something went wrong!",
-          type: "danger",
-        },
-      });
+      if(error?.status !== 403) {
+        dispatch({
+          type: "global/globalMessage",
+          payload: {
+            message: error.response?.data?.message || "Something went wrong!",
+            type: "danger",
+          },
+        });
+      }
     } finally {
       isLoading(false);
     }

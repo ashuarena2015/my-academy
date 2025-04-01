@@ -1,17 +1,23 @@
 "use client";
-// import { Link } from "@heroui/react";
+import { useSelector } from "react-redux";
+import { RootState } from "../api/store";
 
 export default function ProfileLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+
+  const { loginUser } = useSelector((state: RootState) => state.users);
+
+  if(!loginUser?.email) {
+    return true;
+  }
+
   return (
     <section>
-      <div className="inline-block max-w-lg justify-center">
-        <h1 className="text-3xl font-mono">Profile</h1>
-        <div className="mt-10">{children}</div>
-      </div>
+      <h1 className="text-3xl font-mono">Profile</h1>
+      <div className="mt-10">{children}</div>
     </section>
   );
 }

@@ -32,8 +32,7 @@ const UserAvatar = React.memo(() => {
         onError: "GLOBAL_MESSAGE",
         dispatchType: "userLogout"
       },
-    });
-    console.log({response});
+    }) as { isLogout?: boolean }; // Cast response to expected type
     if(response?.isLogout) {
       router.push('/login');
     }
@@ -50,7 +49,7 @@ const UserAvatar = React.memo(() => {
               src: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
             }}
             className="transition-transform"
-            description={loginUser?.adminRole}
+            description={loginUser?.userType}
             name={
               loginUser?.firstName
                 ? `${loginUser?.firstName} ${loginUser?.lastName}`
@@ -63,7 +62,7 @@ const UserAvatar = React.memo(() => {
             <p className="font-bold">Signed in as</p>
             <p className="font-bold">{loginUser?.email}</p>
           </DropdownItem>
-          <DropdownItem key="settings">My Profile</DropdownItem>
+          <DropdownItem key="settings" onClick={() => router.push('/profile')}>My Profile</DropdownItem>
           <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
           <DropdownItem key="logout" color="danger" onClick={handleLogout}>
             Log Out

@@ -5,7 +5,7 @@ exports.verifyToken = async (req, res, next) => {
     const token = req.cookies.auth;
 
     if (!token) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return res.status(403).json({ error: "Unauthorized" });
     }
     const decoded = await jwt.verify(
       token,

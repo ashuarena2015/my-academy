@@ -29,6 +29,8 @@ import {
   Logo,
 } from "@/components/icons";
 
+import Image from 'next/image';
+
 export const Navbar = () => {
   const searchInput = (
     <Input
@@ -52,12 +54,11 @@ export const Navbar = () => {
   );
 
   return (
-    <HeroUINavbar maxWidth="full" position="sticky">
-      <NavbarContent className="basis-1/5" justify="start">
-        <NavbarBrand as="li" className="gap-3 max-w-fit">
+    <HeroUINavbar maxWidth="full" className="p-0 -ml-4" position="sticky">
+      <NavbarContent className="basis-1/12 p-0" justify="start">
+        <NavbarBrand as="li" className="gap-3 max-w-fit p-0">
           <NextLink className="flex justify-start items-center gap-1" href="/">
-            <Logo />
-            <p className="font-bold text-inherit">ACME</p>
+            <Image src="/logo.png" alt="Logo" width={200} height={100} />
           </NextLink>
         </NavbarBrand>
         {/* <ul className="hidden lg:flex gap-4 justify-start ml-2">

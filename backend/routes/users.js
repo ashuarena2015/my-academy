@@ -7,7 +7,9 @@ const bcrypt = require("bcrypt");
 const routerUsers = express.Router();
 const jwt = require('jsonwebtoken');
 const { verifyToken } = require('./isAuth');
-const User = require('./schema/users');
+const { User, UserRegister } = require('./schema/Users/user');
+// const UserLogin = require('./schema/Users/userLogin');
+// const UserRegister = require('./schema/Users/userRegister');
 
 routerUsers.get('/auth', verifyToken, async (req, res) => {
     try {
@@ -18,20 +20,22 @@ routerUsers.get('/auth', verifyToken, async (req, res) => {
                 user: existingUser,
             });
     } catch (error) {
-        res.send({error: error?.errmsg});
+        return res
+            .status(403)
+            .json({error: error?.errmsg});
     }
 })
 
 // Generate Unique Student ID
 const generateUserId = async (userType) => {
-    const lastUser = await User.findOne().sort({ createdAt: -1 });
+    const lastUser = await UserRegister.findOne().sort({ createdAt: -1 });
     const lastId = lastUser ? parseInt(lastUser.userId.slice(3)) : 0;
     return userType === 'student' ? `STU${lastId + 1}` : `ADM${lastId + 1}`;
 };
 
 routerUsers.post("/register", async (req, res) => {
     try {
-        const { password, email, user_type, role } = req.body.userInfo;
+        const { password, email, userType } = req.body.userInfo;
         if (!password || !email) {
             return res.status(400).json({ error: "Name and Email are required" });
         }
@@ -41,13 +45,13 @@ routerUsers.post("/register", async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         // Generate Student ID
-        const userId = await generateUserId(user_type);
+        const userId = await generateUserId(userType);
         // 🔹 Create and Save Student
-        const newUser = new User({
+        const newUser = new UserRegister({
             password: hashedPassword,
             email,
             userId,
-            adminRole: role
+            userType
         });
         await newUser.save();
         res.status(201).json({ message: "User saved!", user: newUser });
@@ -58,8 +62,8 @@ routerUsers.post("/register", async (req, res) => {
 
 routerUsers.post("/update", async (req, res) => {
     try {
-        const { email: userEmail, firstName, lastName, address, dob, adminRole, phone,
-            alternatePhone, fatherName, motherName } = req.body.userInfo;
+        const { email: userEmail, firstName, lastName, address, dob, userType, phone,
+            alternatePhone, fatherName, motherName, class_current, admission_class, doa, academic_session } = req.body.userInfo;
         console.log('req.body.userInfo', req.body.userInfo, userEmail);
         if (!userEmail) {
             return res.status(400).json({ error: "Name and Email are required" });
@@ -76,11 +80,15 @@ routerUsers.post("/update", async (req, res) => {
                 lastName,
                 address,
                 dob,
-                adminRole,
+                userType,
                 phone,
                 alternatePhone,
                 fatherName,
-                motherName
+                motherName,
+                class_current,
+                academic_session,
+                admission_class,
+                doa,
             },
             { new: true, upsert: true } // Create if not found
         );

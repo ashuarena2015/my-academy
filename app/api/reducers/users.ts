@@ -47,7 +47,7 @@ const usersSlice = createSlice({
     getLoginDetails: (state, action: PayloadAction<{ user: User }>) => {
       state.loginUser = action.payload.user;
     },
-    setLoading: (state, action: PayloadAction<{ loading: boolean }>) => {
+    isLoading: (state, action: PayloadAction<{ loading: boolean }>) => {
       state.isLoading = action.payload.loading;
     },
     logoutUser: (state) => {
@@ -57,6 +57,6 @@ const usersSlice = createSlice({
 });
 
 // Export actions & reducer
-export const { getUsers, setLoading, getLoginDetails, logoutUser } =
+export const { getUsers, isLoading, getLoginDetails, logoutUser } =
   usersSlice.actions;
 export default usersSlice.reducer;

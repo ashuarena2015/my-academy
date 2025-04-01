@@ -72,6 +72,7 @@ const statusColorMap: Record<string, "success" | "danger" | "warning"> = {
 };
 
 const StudentsList: React.FC = () => {
+  console.log('StudentsList');
   const renderCell = React.useCallback((user: UserType, columnKey: string) => {
     const cellValue = user[columnKey as keyof UserType];
 
@@ -122,26 +123,7 @@ const StudentsList: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const getAuthentication = async () => {
-      dispatch({
-        type: "apiRequest",
-        payload: {
-          url: `student`,
-          method: "GET",
-          onSuccess: "getStudentList",
-          onError: "GLOBAL_MESSAGE",
-          dispatchType: "getStudentList",
-          params: {
-            limit: 10,
-            offset: 0
-          }
-        },
-      }) as unknown as { isAuth: boolean };
-
-      //   redirect(response?.isAuth ? "/dashboard" : "login");
-    };
-
-    getAuthentication();
+    console.log('Student List');
   }, []);
 
   return (

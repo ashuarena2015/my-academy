@@ -13,29 +13,10 @@ export default function RegisterPage() {
   const router = useRouter();
   const globalMessage = useSelector((state: RootState) => state.global);
 
-  interface UserInputInfo {
-    email: string;
-  }
-
-  const [userInputInfo, setUserInputInfo] = useState<UserInputInfo>({
-    email: "",
-  });
-
-  const [isAdminRegister, setIsAdminRegister] = useState<boolean>(false);
-
-  const handleSelectRole = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsAdminRegister(e.target.value === "admin");
-    localStorage.setItem("loginAs", e.target.value);
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
-
-    setUserInputInfo({
-      email: data.email as string,
-    });
 
     const response = await dispatch({
       type: "apiRequest",
@@ -48,8 +29,9 @@ export default function RegisterPage() {
         body: { userInfo: { ...data } },
       },
     });
-    if (response?.isLogin) {
-      router.push('/profile');
+
+    if ((response as any)?.isLogin) {
+      router.replace('/profile');
     }
   };
 
@@ -70,15 +52,6 @@ export default function RegisterPage() {
         />
       ) : null}
       <Form className="gap-4" id="register_form" onSubmit={handleSubmit}>
-        <RadioGroup
-          name="user_type"
-          orientation="horizontal"
-          value={localStorage.getItem("loginAs")}
-          onChange={handleSelectRole}
-        >
-          <Radio value="student">Student</Radio>
-          <Radio value="admin">Administration</Radio>
-        </RadioGroup>
         <Input
           errorMessage="Error message"
           name="email"
