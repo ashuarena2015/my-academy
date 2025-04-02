@@ -6,18 +6,6 @@ export const siteConfig = () => {
     description: "A School Management System",
     navItems: [
       {
-        label: "Login",
-        href: "/login",
-        icon: "Login",
-        iconColor: "bg-primary-100",
-      },
-      {
-        label: "Register",
-        href: "/register",
-        icon: "Register",
-        iconColor: "bg-default-100",
-      },
-      {
         label: "Dashboard",
         href: "/dashboard",
         icon: "Dashboard",

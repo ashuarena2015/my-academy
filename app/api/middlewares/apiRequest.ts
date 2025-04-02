@@ -49,6 +49,12 @@ const api =
             type: "success",
           },
         });
+        dispatch({
+          type: "users/getLoginDetails",
+          payload: {
+            user: response?.data?.user,
+          },
+        });
       }
       if (dispatchType === "userLogin") {
         dispatch({
