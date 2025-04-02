@@ -49,7 +49,7 @@ const UserAvatar = React.memo(() => {
               src: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
             }}
             className="transition-transform"
-            description={loginUser?.userType}
+            description={loginUser?.adminRole?.toUpperCase()}
             name={
               loginUser?.firstName
                 ? `${loginUser?.firstName} ${loginUser?.lastName}`

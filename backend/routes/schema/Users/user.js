@@ -9,7 +9,7 @@ const UserSchema = new mongoose.Schema(
         return this.kind === "UserRegister";
       },
     }, // Required only for registration
-    userId: { type: String },
+    userId: { type: String, unique: true },
     firstName: { type: String },
     lastName: { type: String },
     dob: { type: String },

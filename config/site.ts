@@ -18,6 +18,12 @@ export const siteConfig = () => {
         iconColor: "bg-warning-100 ",
       },
       {
+        label: "Fee",
+        href: "/fee",
+        icon: "Students",
+        iconColor: "bg-warning-100 ",
+      },
+      {
         label: "Staffs",
         href: "/staffs",
         icon: "Staffs",

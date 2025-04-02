@@ -34,6 +34,7 @@ const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 
 const { routerUsers } = require('./routes/users');
+const { routerFee } = require('./routes/fee');
 
 const MONGO_URI = "mongodb://127.0.0.1:27017/my-academy";
 
@@ -65,6 +66,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/user", routerUsers);
+app.use("/api/fee", routerFee);
 
 app.listen(port, () => {
   console.log("Listening on 3001");

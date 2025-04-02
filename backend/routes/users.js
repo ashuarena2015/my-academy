@@ -11,6 +11,20 @@ const { User, UserRegister } = require('./schema/Users/user');
 // const UserLogin = require('./schema/Users/userLogin');
 // const UserRegister = require('./schema/Users/userRegister');
 
+routerUsers.post("/", async (req, res) => {
+    try {
+        const { class_current } = req.body;
+        if (!class_current) {
+            return res.status(400).json({ error: "Class is required" });
+        }
+        const studentDetails = await User.find({ class_current });                  
+        console.log({studentDetails});
+        res.json(studentDetails);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 routerUsers.get('/auth', verifyToken, async (req, res) => {
     try {
         const existingUser = await User.findOne({ email: req.user?.email });

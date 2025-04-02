@@ -2,7 +2,7 @@
 
 import React, { useMemo } from "react";
 import UsersCount from "../components/usersCountWidget";
-import StudentsList from "../components/Students/StudentsList";
+import StudentsList from "../students/studentsList";
 
 const DashboardPage = () => {
   // Memoize components to prevent unnecessary re-renders

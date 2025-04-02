@@ -2,11 +2,13 @@ import { combineReducers } from "redux";
 
 import usersReducer from "./users";
 import globalReducer from "./global";
+import feeReducer from  "./fee";
 
 // Define the RootState type (infer types from reducers)
 const appReducer = combineReducers({
   users: usersReducer,
   global: globalReducer,
+  fee: feeReducer,
 });
 
 // Define RootState type for TypeScript

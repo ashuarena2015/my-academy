@@ -30,8 +30,8 @@ export default function ProfilePage() {
     dob: string;
     address?: string; // Added the address property
     userType: string;
-    phone: string;
-    alternatePhone: string;
+    phone: number;
+    alternatePhone: number;
     fatherName?: string; // Added the fatherName property
     motherName?: string; // Added the motherName property,
     doa: string;
@@ -48,8 +48,8 @@ export default function ProfilePage() {
     address: "",
     dob: "",
     userType: "",
-    phone: "",
-    alternatePhone: "",
+    phone: 0,
+    alternatePhone: 0,
     fatherName: "",
     motherName: "",
     doa: "",
@@ -70,8 +70,8 @@ export default function ProfilePage() {
         address: loginUser.address || "",
         dob: loginUser.dob || "",
         userType: loginUser?.userType || "",
-        phone: loginUser?.phone || "",
-        alternatePhone: loginUser?.alternatePhone || "",
+        phone: loginUser?.phone || 0,
+        alternatePhone: loginUser?.alternatePhone || 0,
         fatherName: loginUser?.fatherName || "",
         motherName: loginUser?.motherName || "",
         doa: loginUser?.doa || "",
@@ -122,9 +122,9 @@ export default function ProfilePage() {
     });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-
+  
     setUserInputInfo({
       ...userInputInfo,
       [name]: value,
@@ -134,9 +134,9 @@ export default function ProfilePage() {
   const [changedDob, setChangedDob] = useState<Date | null>(null);
   const [changedDoa, setChangedDoa] = useState<Date | null>(null);
 
-  const handleDateChange = (date: Date | null, name: String) => {
+  const handleDateChange = (date: Date | null, name: string) => {
     if (date) {
-      new Date(date.year, date.month - 1, date.day);
+      new Date(date.getFullYear(), date.getMonth(), date.getDate());
       const formattedDate = format(date, "dd-MM-yyyy");
 
       setUserInputInfo({
@@ -168,8 +168,8 @@ export default function ProfilePage() {
         name={name}
         placeholder={placeholder}
         type={type}
-        value={userInputInfo?.[name as keyof UserInputInfo]}
-        onChange={handleChange}
+        value={userInputInfo?.[name as keyof UserInputInfo] !== undefined ? String(userInputInfo[name as keyof UserInputInfo]) : undefined}
+        onChange={(e) => handleChange(e)}
         validate={(value) => formInputValidate(value, errorMessage) as true | string | null | undefined}
       />
     )
@@ -179,7 +179,7 @@ export default function ProfilePage() {
     return (
       <Select
         className={classNames}
-        defaultSelectedKeys={[userInputInfo[name as keyof UserInputInfo]]}
+        defaultSelectedKeys={[userInputInfo[name as keyof UserInputInfo]].filter(Boolean) as string[]}
         label={label}
         labelPlacement="outside"
         name={name}
@@ -288,19 +288,15 @@ export default function ProfilePage() {
                 </>) : null}
             </div>
         </div>
-        <div className="grid grid-cols-2 justify-between mt-8">
-          <div className="col-span-1">
-            <Button className="w-full" color="primary" onClick={handleSubmit}>
-              Update
-            </Button>
-            <Link className="text-sm mt-2" href="#" underline="always">
-              Change password
-            </Link>
-          </div>
-          <div className="col-span-1" />
+        <div className="flex w-auto mt-8">
+          <Button color="primary" onClick={handleSubmit}>
+            Update
+          </Button>
+          <Link className="text-sm whitespace-nowrap ml-4" href="#" underline="always">
+            Change password
+          </Link>
         </div>
-        </Form>
-      </div>
-  : null
+      </Form>
+    </div> : null
   );
 }

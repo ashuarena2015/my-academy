@@ -55,6 +55,7 @@ const api =
             user: response?.data?.user,
           },
         });
+        return;
       }
       if (dispatchType === "userLogin") {
         dispatch({
@@ -70,7 +71,6 @@ const api =
             user: response?.data?.user,
           },
         });
-
         return { isLogin: true };
       }
       if (dispatchType === "getLoginDetails") {
@@ -80,7 +80,6 @@ const api =
             user: response?.data?.user,
           },
         });
-
         return { isAuth: true };
       }
       if (dispatchType === "userLogout") {
@@ -90,8 +89,24 @@ const api =
             user: {},
           },
         });
-
         return { isLogout: true };
+      }
+      if(dispatchType === "getAllFeeDetails") {
+        dispatch({
+          type: "fee/getAllFeeDetails",
+          payload: {
+            feeAllDetails: response?.data,
+          },
+        });
+        return true;
+      }
+      if(dispatchType === "getAllStudents") {
+        console.log({response});
+        dispatch({
+          type: "users/getAllStudents",
+          payload: response?.data,
+        });
+        return true;
       }
     } catch (error: any) {
       if(error?.status !== 403) {

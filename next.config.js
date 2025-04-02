@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-    domains: ["avatarfiles.alphacoders.com"],
-  },
+      domains: ["avatarfiles.alphacoders.com"],
+    },
+    reactStrictMode: false, // Disable Strict Mode
 };
 
 module.exports = nextConfig;

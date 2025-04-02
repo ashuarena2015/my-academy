@@ -24,28 +24,16 @@ const MainLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
 
     return (
         <div className="flex w-full justify-start h-screen">
-        {isLoading ? <Spinner color="default" className="m-auto" /> :
-            loginUser?.email ? 
-                (
-                    <>
-                        <div className="w-96" style={{ width: "350px" }}>
-                            <SideBar />
-                        </div>
-                        <div className="w-full grid grid-cols-5 relative">
-                            <main className="w-full p-5 pt-2 col-span-4">
-                                <Navbar />
-                                <div className="mt-10 pl-5 pr-5">{children}</div>
-                            </main>
-                            <div className="col-span-1 bg-slate-600">Right Side</div>
-                        </div>
-                    </>
-                )
-            : <div className="w-full relative">
-                <main className="w-full">
-                    <div className="mt-20 pl-5 pr-5">{children}</div>
-                </main>
+            <div className="w-96" style={{ width: "350px" }}>
+                <SideBar />
             </div>
-        }
+            <div className="w-full grid grid-cols-5 relative">
+                <main className="w-full p-5 pt-2 col-span-5">
+                    <Navbar />
+                    <div className="mt-10 pl-5 pr-5">{children}</div>
+                </main>
+                {/* <div className="col-span-1 bg-slate-600">Right Side</div> */}
+            </div>
         </div>
     )
 }

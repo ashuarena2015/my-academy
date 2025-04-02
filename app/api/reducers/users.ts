@@ -8,22 +8,15 @@ interface User {
   [key: string]: any;
 }
 
-interface Expense {
-  id?: string;
-  amount?: number;
-  date?: string;
-  metadata?: Record<string, any>;
-}
-
 interface UsersState {
   users: User[];
   selectedUser: User | null;
   isLoading: boolean;
-  expenses: Expense[];
   loginUser: User;
   userAttributes: any[];
   expensesCount?: number;
   totalExpenses?: number;
+  students: any[];
 }
 
 // Initial state with TypeScript
@@ -31,9 +24,9 @@ const initialState: UsersState = {
   users: [],
   selectedUser: null,
   isLoading: true,
-  expenses: [],
   loginUser: {},
   userAttributes: [],
+  students: []
 };
 
 // Create slice with TypeScript
@@ -52,11 +45,14 @@ const usersSlice = createSlice({
     },
     logoutUser: (state) => {
       state.loginUser = {};
+    },
+    getAllStudents: (state, action: PayloadAction<{ users: User[] }>) => {
+      state.students = action.payload;
     }
   },
 });
 
 // Export actions & reducer
-export const { getUsers, isLoading, getLoginDetails, logoutUser } =
+export const { getUsers, isLoading, getLoginDetails, logoutUser, getAllStudents } =
   usersSlice.actions;
 export default usersSlice.reducer;
