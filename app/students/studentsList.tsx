@@ -46,7 +46,20 @@ const StudentsList: React.FC = () => {
 
   const dispatch = useDispatch();
 
-  const { students } = useSelector((state: RootState) => state.users);
+  const users: UserType[] = useSelector((state: RootState) =>
+    state.users.users.map((user) => ({
+      id: Number(user.id) || 0,
+      userId: user.userId || user.id, // Map userId or fallback to id
+      name: `${user.firstName} ${user.lastName}`,
+      phone: user.phone || "",
+      address: user.address || "",
+      doa: user.doa || "",
+      firstName: user.firstName || "",
+      lastName: user.lastName || "",
+      email: user.email || "",
+      status: user.status || false,
+    }))
+  );
 
   interface StudentFilter {
     class_current?: string;
@@ -70,9 +83,9 @@ const StudentsList: React.FC = () => {
         payload: {
           url: `user`,
           method: "POST",
-          onSuccess: "users/getAllStudents",
+          onSuccess: "users/getAllUsers",
           onError: "GLOBAL_MESSAGE",
-          dispatchType: "getAllStudents",
+          dispatchType: "getAllUsers",
           body: {
             class_current: studentFilter.class_current,
           }
@@ -111,12 +124,12 @@ const StudentsList: React.FC = () => {
             )}
           </TableHeader>
           <TableBody>
-            {!students?.length ? 
+            {!users?.length ? 
               <TableRow>
                 <TableCell colSpan={6}>No records found!</TableCell>
               </TableRow>
               : 
-              students?.map((student: UserType, i) => {
+              users?.map((student: UserType, i) => {
                 return (
                   <TableRow key={i}>
                     <TableCell>{student.userId}</TableCell>

@@ -165,7 +165,20 @@ routerUsers.post('/login', async (req, res) => {
         res.send({error: error?.errmsg});
     }
     
-})
+});
+
+routerUsers.get("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id) {
+            return res.status(400).json({ error: "Id is required" });
+        }
+        const userDetails = await User.find({ userId: id });
+        res.json(userDetails[0]);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 routerUsers.get("/logout", (req, res) => {
     res.clearCookie("auth", { httpOnly: true, secure: true, sameSite: "Strict" });

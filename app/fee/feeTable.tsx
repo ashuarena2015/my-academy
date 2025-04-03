@@ -12,23 +12,27 @@ interface FeeTableListProps {
 }
 
 const FeeTableList: FC<FeeTableListProps> = ({ feeAllDetails }) => {
+  console.log({feeAllDetails});
   return (
     <Table aria-label="Example static collection table">
       <TableHeader>
-        <TableColumn>Name</TableColumn>
+        <TableColumn>Class / Academic Session</TableColumn>
+        <TableColumn>Fee type</TableColumn>
         <TableColumn>Amount paid</TableColumn>
-        <TableColumn>Academic Session</TableColumn>
+        <TableColumn>Payment date</TableColumn>
+        <TableColumn>Payment mode</TableColumn>
         <TableColumn>Status</TableColumn>
       </TableHeader>
       <TableBody>
         {feeAllDetails?.map((fee, index) => {
-            console.log({feePayment: fee?.payments});
           return (
             <TableRow key={index}>
-                <TableCell>{fee.student.firstName} {fee.student.lastName}</TableCell>
-                <TableCell>{fee.firstName} {fee.lastName}</TableCell>
-                <TableCell>{fee.firstName} {fee.lastName}</TableCell>
-                <TableCell>Active</TableCell>
+                <TableCell>{fee.class}</TableCell>
+                <TableCell>{fee.fee_type}</TableCell>
+                <TableCell>{fee.amount_paid}</TableCell>
+                <TableCell>{fee.payment_date}</TableCell>
+                <TableCell>{fee.payment_mode}</TableCell>
+                <TableCell>{fee.status}</TableCell>
             </TableRow>
           )
         })}

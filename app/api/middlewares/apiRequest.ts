@@ -100,10 +100,19 @@ const api =
         });
         return true;
       }
-      if(dispatchType === "getAllStudents") {
+      if(dispatchType === "getAllUsers") {
         console.log({response});
         dispatch({
-          type: "users/getAllStudents",
+          type: "users/getAllUsers",
+          payload: {
+            users: response?.data
+          },
+        });
+        return true;
+      }
+      if(dispatchType === "getUserDetail") {
+        dispatch({
+          type: "users/getUserDetail",
           payload: response?.data,
         });
         return true;

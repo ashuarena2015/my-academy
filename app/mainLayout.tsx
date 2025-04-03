@@ -23,14 +23,14 @@ const MainLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
     }, [loginUser, isLoading]);
 
     return (
-        <div className="flex w-full justify-start h-screen">
-            <div className="w-96" style={{ width: "350px" }}>
+        <div className="flex w-full justify-start">
+            <div className="w-9" style={{ width: "350px" }}>
                 <SideBar />
             </div>
-            <div className="w-full grid grid-cols-5 relative">
+            <div className="w-full relative bg-zinc-50 h-screen">
+                <Navbar />
                 <main className="w-full p-5 pt-2 col-span-5">
-                    <Navbar />
-                    <div className="mt-10 pl-5 pr-5">{children}</div>
+                    <div className="mt-10 p-5 rounded-xl border-">{children}</div>
                 </main>
                 {/* <div className="col-span-1 bg-slate-600">Right Side</div> */}
             </div>

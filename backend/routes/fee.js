@@ -13,23 +13,6 @@ routerFee.post("/", async (req, res) => {
         if (!academicClass) {
             return res.status(400).json({ error: "Class is required" });
         }
-        const studentDetails = await User.find({ class_current: academicClass });
-        console.log({studentDetails});
-        // const feeDetails = await Fee.aggregate([
-        //     { $match: { class: academicClass } }, // Find Fee by class
-        //     {
-        //       $lookup: {
-        //         from: "feepayments", // Other collection (Payments)
-        //         localField: "class", // Field from Fee
-        //         foreignField: "class", // Matching field in Payments
-        //         as: "paymentDetails",
-        //       },
-        //     },
-        //     { $unwind: "$paymentDetails" }, // Flatten results
-        //     { $match: { "paymentDetails.student_id": studentId } }, // Filter by student_id
-        //   ]);
-      
-        // res.status(201).json({ message: "Fee details fetched!", feeDetails });
         const students = await User.aggregate([
             {
               $match: { class_current: academicClass }, // Match users by class
@@ -103,9 +86,6 @@ routerFee.post("/", async (req, res) => {
               },
             },
           ]);
-          
-                    
-          console.log({students});
           res.json(students);
     } catch (error) {
         res.status(500).json({ error: error.message });
