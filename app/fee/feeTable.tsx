@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../api/store";
 import { useParams } from "next/navigation";
 import { academicSessions, classes } from "../profile/common";
-import FeeAmount from "./feeAmount"
+// import FeeAmount from "./feeAmount"
 
 const FeeTableList: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -14,14 +14,15 @@ const FeeTableList: FC = () => {
   const params = useParams();
   const { id } = params;
 
-  const { feeAllDetails } = useSelector((state: RootState) => state.fee);
+  const { detailsType, feeDetailsInfo  } = useSelector((state: RootState) => state.fee.feeAllDetails);
+
+  console.log({feeDetailsInfo: feeDetailsInfo[0]});
 
   const [academicSession, setAcademicSession] = useState<string>(academicSessions()[0]?.key || "");
   const [classCurrent, setClassCurrent] = useState<string>(classes()[0]?.key || "");
   const [studentId, setStudentId] = useState<string>(typeof id === 'string' ? id : '');
   const [annualFeeInfo, setAnnualFeeInfo] = useState(null);
 
-  console.log({annualFeeInfo});
   const [academicYear, setAcademicYear] = useState({
     startDate: "2025-04-01",
     endDate: "2026-03-31"
@@ -53,7 +54,7 @@ const FeeTableList: FC = () => {
         dispatchType: "getAllFeeDetails",
         body: {
           student_id: studentId,
-          class: classCurrent,
+          class: id ? "" : classCurrent,
           startDate: academicYear?.startDate,
           endDate: academicYear?.endDate,
           academicSession: academicSession
@@ -76,7 +77,7 @@ const FeeTableList: FC = () => {
 
   return (
     <div className="grid grid-cols-3 gap-4">
-      <div className="col-span-2">
+      <div className="col-span-3">
         <Card>
           <CardBody>
             <div className="flex gap-2 mb-4">
@@ -105,35 +106,61 @@ const FeeTableList: FC = () => {
             </div>
             <Table aria-label="Example static collection table" removeWrapper={true}>
               <TableHeader>
-                <TableColumn>Student name</TableColumn>
-                <TableColumn>Annual fee</TableColumn>
-                <TableColumn>Amount paid</TableColumn>
-                <TableColumn>Amount Due</TableColumn>
+                {detailsType === 'group' ? (
+                  <>
+                    <TableColumn>Student name</TableColumn>
+                    <TableColumn>Annual fee</TableColumn>
+                    <TableColumn>Amount paid</TableColumn>
+                    <TableColumn>Amount Due</TableColumn>
+                  </>
+                ) : (
+                  <>
+                    <TableColumn>Amount paid</TableColumn>
+                    <TableColumn>Payment date</TableColumn>
+                    <TableColumn>Payment mode</TableColumn>
+                  </>
+                )}
               </TableHeader>
               <TableBody>
-                {feeAllDetails?.map((fee, i) => {
-                  return (
-                    <TableRow key={i}>
-                        <TableCell>               
-                          <Link showAnchorIcon color="foreground" size="sm" href={`/students/${fee.student.userId}`} className="font-semibold">
-                              {fee.student.firstName} {fee.student.lastName}
-                          </Link>
-                          <p className="text-xs">{fee.student.email} / {fee.student.userId}</p>
-                        </TableCell>
-                        <TableCell>{annualFeeInfo?.annualFee}</TableCell>
-                        <TableCell>{fee.totalAmount }</TableCell>
-                        <TableCell>{getDueAmount(annualFeeInfo?.annualFee, fee.totalAmount)}</TableCell>
-                    </TableRow>
-                  )
-                })}
+                {feeDetailsInfo?.length ? (
+                  detailsType === "group" ? 
+                    feeDetailsInfo?.map((fee, i) => {
+                      return (
+                        <TableRow key={i}>
+                            <TableCell>               
+                              <Link showAnchorIcon color="foreground" size="sm" href={`/students/${fee.student.userId}`} className="font-semibold">
+                                  {fee.student.firstName} {fee.student.lastName}
+                              </Link>
+                              <p className="text-xs">{fee.student.email} / {fee.student.userId}</p>
+                            </TableCell>
+                            <TableCell>{annualFeeInfo?.annualFee}</TableCell>
+                            <TableCell>{fee.totalAmount }</TableCell>
+                            <TableCell>{getDueAmount(annualFeeInfo?.annualFee, fee.totalAmount)}</TableCell>
+                        </TableRow>
+                      )
+                    })
+                  : feeDetailsInfo[0]?.payments?.map((fee, i) => {
+                      return (
+                        <TableRow key={i}>
+                            <TableCell>{fee?.amount_paid}</TableCell>
+                            <TableCell>{fee?.payment_date}</TableCell>
+                            <TableCell>{fee?.payment_mode}</TableCell>
+                        </TableRow>
+                      )
+                    })
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={detailsType === 'group' ? 4 : 3}>No records found!</TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </CardBody>
         </Card>
       </div>
-      <div className="col-span-1">
+      {/* <div className="col-span-1">
         <FeeAmount academicSession={academicSession} setAnnualFeeInfo={setAnnualFeeInfo} academicClass={classCurrent} />
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -138,7 +138,9 @@ const StudentDetails: FC = () => {
                     </div>
                 </div>
                 <Divider />
-                <FeeTableList />
+                <div className="mt-4">
+                    <FeeTableList />
+                </div>
                 {/* <div className="py-5">
                     <p className="text-lg font-semibold mb-2">Fee details</p>
                     <FeeTableList feeAllDetails={currentUser?.payments || []} />

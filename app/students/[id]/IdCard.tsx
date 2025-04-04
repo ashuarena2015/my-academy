@@ -13,14 +13,6 @@ const IDCard: React.FC<IDCardProps> = ({ details }) => {
 
     return (
         <div className="flex">
-            <div className="absolute z-0 rotate-180 ml-5 top-20">
-                <Image
-                    width={400}
-                    height={400}
-                    removeWrapper={true}
-                    src="/images/id-belt.png"
-                />
-            </div>
             <div className="id-card relative z-1 rounded-lg border-1">
                 <div className="id-header">
                     <div /><div />

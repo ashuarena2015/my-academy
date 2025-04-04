@@ -5,34 +5,36 @@
 const express = require('express');
 const routerFee = express.Router();
 const Fee = require('./schema/Fee/fee');
-const { User } = require('./schema/Users/user');
 
 routerFee.post("/", async (req, res) => {
   try {
-      console.log('req.body', req.body);
       const { class: academicClass, startDate, endDate, student_id, academicSession } = req.body;
-      // if (!academicClass || !student_id) {
-      //     return res.status(400).json({ error: "Class is required" });
-      // }
 
-      const feeDetails = await Fee.aggregate([
-        {
-          $match: {
-            class: academicClass,
-            academic_session: academicSession // assuming this field is in feepayments
-          }
-        },
+      let matchStage = {};
+
+      if (student_id) {
+        matchStage = {
+          student_id,
+          academic_session: academicSession
+        };
+      } else {
+        matchStage = {
+          class: academicClass,
+          academic_session: academicSession
+        };
+      }
+      
+      const feeDetailsInfo = await Fee.aggregate([
+        { $match: matchStage },
         {
           $lookup: {
-            from: "users", // join users collection
+            from: "users",
             localField: "student_id",
             foreignField: "userId",
             as: "student"
           }
         },
-        {
-          $unwind: "$student" // flatten the joined student data
-        },
+        { $unwind: "$student" },
         {
           $group: {
             _id: "$student_id",
@@ -75,8 +77,8 @@ routerFee.post("/", async (req, res) => {
           }
         }
       ]);      
-
-      res.json(feeDetails);
+      // res.status(201).json(feeDetailsInfo);
+      res.status(201).json({ detailsType: student_id ? "single" : "group", feeDetailsInfo });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

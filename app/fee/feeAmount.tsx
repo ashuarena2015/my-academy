@@ -36,8 +36,8 @@ const FeeAmount: FC<FeeAmountProps> = ({ academicSession, academicClass, setAnnu
       
 
     return (
-        <Card>
-            <CardBody>
+        <div>
+            <div>
                 <Table removeWrapper={true} aria-label="Example static collection table">
                     <TableHeader>
                         <TableColumn>Class</TableColumn>
@@ -52,8 +52,8 @@ const FeeAmount: FC<FeeAmountProps> = ({ academicSession, academicClass, setAnnu
                         </TableRow>
                     </TableBody>
                 </Table>                   
-            </CardBody>
-        </Card>
+            </div>
+        </div>
     )
 }
 

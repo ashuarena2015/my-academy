@@ -1,21 +1,19 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-// Define the types for User and Expense
-interface Fee {
-  student_id?: string;
-  fee_id?: string;
-  amount_paid?: string;
-  [key: string]: any;
-}
-
-interface UsersState {
-  feeAllDetails: Fee[];
-  isFeeDetailsLoading: boolean;
+interface FeesState {
+  feeAllDetails: {
+    feeDetailsInfo: Array<any>;
+    detailsType: string;
+  };
+  isFeeDetailsLoading: boolean  
 }
 
 // Initial state with TypeScript
-const initialState: UsersState = {
-  feeAllDetails: [],
+const initialState: FeesState = {
+  feeAllDetails: {
+    feeDetailsInfo: [],
+    detailsType: ""
+  },
   isFeeDetailsLoading: true,
 };
 
@@ -24,8 +22,11 @@ const feeSlice = createSlice({
   name: "fee",
   initialState,
   reducers: {
-    getAllFeeDetails: (state, action: PayloadAction<{ feeAllDetails: Fee[]; }>) => {
-      state.feeAllDetails = action.payload.feeAllDetails;
+    getAllFeeDetails: (state, action: PayloadAction<{ feeAllDetails: { feeDetailsInfo: Array<any>; detailsType: string; }; }>) => {
+      state.feeAllDetails = {
+        feeDetailsInfo: action.payload.feeAllDetails.feeDetailsInfo,
+        detailsType: action.payload.feeAllDetails.detailsType,
+      };
     },
     isFeeDetailsLoading: (state, action: PayloadAction<{ loading: boolean }>) => {
       state.isFeeDetailsLoading = action.payload.loading;
