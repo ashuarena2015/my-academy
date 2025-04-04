@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "next/navigation";
 import {
@@ -10,9 +10,11 @@ import {
     Skeleton,
     Card,
     CardBody,
+    Input
 } from "@heroui/react";
 import FeeTableList from "../../fee/feeTable";
-import IDCard from "./IdCard";
+import IDCard from "./IdCard"
+import ImageUploader from '../../components/imageUploader/imageUploader';
 
 const StudentDetails: FC = () => {
 
@@ -75,14 +77,17 @@ const StudentDetails: FC = () => {
                 )
                 : (
                     <div className="flex gap-3 mb-5 align-center">
-                        <Image
-                            alt="heroui logo"
-                            height={80}
-                            radius="sm"
-                            src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
-                            width={80}
-                            className="rounded-full border-default-200"
-                        />
+                        <div className="text-center">
+                            <Image
+                                alt="heroui logo"
+                                height={80}
+                                radius="sm"
+                                src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
+                                width={80}
+                                className="rounded-full border-default-200 mb-1"
+                            />                        
+                            <ImageUploader />
+                        </div>
                         <div className="flex flex-col justify-center">
                             <p className="text-2xl">{currentUser?.firstName} {currentUser?.lastName}</p>
                             <p className="text-small text-default-500">{currentUser?.email}</p>
