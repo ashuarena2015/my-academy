@@ -11,7 +11,8 @@ import {
     Card,
     CardBody,
 } from "@heroui/react";
-// import FeeTableList from "../../fee/feeTable";
+import FeeTableList from "../../fee/feeTable";
+import IDCard from "./IdCard";
 
 const StudentDetails: FC = () => {
 
@@ -137,6 +138,7 @@ const StudentDetails: FC = () => {
                     </div>
                 </div>
                 <Divider />
+                <FeeTableList />
                 {/* <div className="py-5">
                     <p className="text-lg font-semibold mb-2">Fee details</p>
                     <FeeTableList feeAllDetails={currentUser?.payments || []} />
@@ -147,21 +149,8 @@ const StudentDetails: FC = () => {
                     </Link>
                 </div> */}
             </div>
-            <div className="col-span-1" />
-            <div className="col-span-1">
-                <div className="id-card">
-                    <div className="header">MY ACADEMY</div>
-                    <div className="year">2023 - 2024</div>
-                    <div className="w-full">
-                        <Image className="profile-img m-auto" src="/images/priyashu.jpg" />
-                    </div>
-                    <div className="name">PRIYASHU KASHYAP</div>
-                    <div className="school">PP1</div>
-                    <div className="details">
-                        <div>GRADE <br /><span className="bold">A</span></div>
-                        <div>STUDENT ID <br /><span className="bold">STU4</span></div>
-                    </div>
-                </div>
+            <div className="col-span-2">
+                <IDCard details={currentUser || []} />
             </div>
         </div>
     )
