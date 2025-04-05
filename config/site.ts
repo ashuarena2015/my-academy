@@ -1,6 +1,6 @@
 export type SiteConfig = typeof siteConfig;
 
-export const siteConfig = () => {
+export const siteConfig = (loginUser: any) => {
   return {
     name: "My Academy",
     description: "A School Management System",
@@ -10,42 +10,49 @@ export const siteConfig = () => {
         href: "/dashboard",
         icon: "Dashboard",
         iconColor: "bg-success-100",
+        isShow: loginUser?.userType !== 'student'
       },
       {
         label: "Students",
         href: "/students",
         icon: "Students",
         iconColor: "bg-warning-100 ",
+        isShow: true
       },
       {
         label: "Fee",
         href: "/fee",
         icon: "Students",
         iconColor: "bg-warning-100 ",
+        isShow: loginUser?.userType !== 'student'
       },
       {
         label: "Staffs",
         href: "/staffs",
         icon: "Staffs",
         iconColor: "bg-default-200",
+        isShow: loginUser?.userType !== 'student'
       },
       {
         label: "News",
         href: "/news",
         icon: "News",
         iconColor: "bg-secondary-100",
+        isShow: true
       },
       {
         label: "Calendar",
         href: "/calendar",
         icon: "Calendar",
         iconColor: "bg-default-200",
+        isShow: true
       },
       {
         label: "Chat",
         href: "/chat",
         icon: "Chat",
         iconColor: "bg-danger-100",
+        isShow: true
       },
     ],
     navMenuItems: [

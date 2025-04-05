@@ -19,7 +19,7 @@ import ImageUploader from '../../components/imageUploader/imageUploader';
 const StudentDetails: FC = () => {
 
     const dispatch = useDispatch();
-    const { currentUser } = useSelector((state: any) => state.users);
+    const { currentUser, loginUser: { userType: loginUserType } = {}  } = useSelector((state: any) => state.users);
 
     const params = useParams();
     const { id } = params;
@@ -82,11 +82,11 @@ const StudentDetails: FC = () => {
                                 alt="heroui logo"
                                 height={80}
                                 radius="sm"
-                                src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
+                                src={`http://localhost:3001/uploads/${currentUser?.userId}-photo.png`}
                                 width={80}
                                 className="rounded-full border-default-200 mb-1"
                             />                        
-                            <ImageUploader />
+                            {loginUserType !== 'student' ? <ImageUploader userId={currentUser?.userId} /> : null}
                         </div>
                         <div className="flex flex-col justify-center">
                             <p className="text-2xl">{currentUser?.firstName} {currentUser?.lastName}</p>
@@ -143,9 +143,10 @@ const StudentDetails: FC = () => {
                     </div>
                 </div>
                 <Divider />
+                {loginUserType !== 'student' ?
                 <div className="mt-4">
                     <FeeTableList />
-                </div>
+                </div> : null }
                 {/* <div className="py-5">
                     <p className="text-lg font-semibold mb-2">Fee details</p>
                     <FeeTableList feeAllDetails={currentUser?.payments || []} />

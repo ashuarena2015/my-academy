@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import "react-image-crop/dist/ReactCrop.css";
 import ReactCrop, {
@@ -9,7 +9,6 @@ import ReactCrop, {
   makeAspectCrop,
   Crop,
 } from "react-image-crop";
-
 import setCanvasPreview from "./setCanvasPreview";
 
 const ASPECT_RATIO = 1;
@@ -114,7 +113,6 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
       convertToPixelCrop(crop, imgRef.current.width, imgRef.current.height),
     );
 
-    console.log({ croppedBlob });
     closeModal();
   };
 

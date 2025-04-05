@@ -3,6 +3,7 @@
 import { FC } from "react";
 import { Listbox, ListboxItem, cn } from "@heroui/react";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 
 import { siteConfig } from "@/config/site";
 
@@ -17,6 +18,8 @@ const SideBar: FC = () => {
   );
 
   const router = useRouter();
+
+  const { loginUser } = useSelector((state: any) => state.users);
 
   const getMenuIcon = (
     iconName: string,
@@ -195,7 +198,7 @@ const SideBar: FC = () => {
   return (
     <div className="border-r-1 flex h-full">
       <Listbox aria-label="Listbox menu with descriptions" variant="flat">
-        {siteConfig().navItems.map((item, i) => (
+        {siteConfig(loginUser).navItems.filter(x => x.isShow).map((item, i) => (
           <ListboxItem
             key={i}
             className="p-3 gap-3"

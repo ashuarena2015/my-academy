@@ -35,6 +35,7 @@ const mongoose = require("mongoose");
 
 const { routerUsers } = require('./routes/users');
 const { routerFee } = require('./routes/fee');
+const path = require("path");
 
 const MONGO_URI = "mongodb://127.0.0.1:27017/my-academy";
 
@@ -64,6 +65,8 @@ const port = 3001;
 
 app.use(express.json());
 app.use(cookieParser());
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api/user", routerUsers);
 app.use("/api/fee", routerFee);

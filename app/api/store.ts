@@ -7,7 +7,15 @@ import error from "./middlewares/apiRequest"; // Ensure this points to the corre
 const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(api as Middleware, error as Middleware),
+    getDefaultMiddleware(
+      {
+        serializableCheck: {
+          // Ignore actions that contain FormData or non-serializables
+          ignoredActions: ['apiRequest'],
+          ignoredPaths: ['payload.body'], // Optional
+        },
+      }
+    ).concat(api as Middleware, error as Middleware),
 });
 
 // ✅ Define TypeScript types for the Redux store

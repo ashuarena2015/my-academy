@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, FC } from 'react'
 
 import ReactCrop, {
   centerCrop,
@@ -9,6 +9,8 @@ import ReactCrop, {
 } from 'react-image-crop'
 import { canvasPreview } from './canvasPreview'
 import { useDebounceEffect } from './useDebounceEffects';
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../api/store";
 
 import {
     Modal,
@@ -18,6 +20,7 @@ import {
     ModalFooter,
     Button,
     useDisclosure,
+    Input
   } from "@heroui/react";
 
 import 'react-image-crop/dist/ReactCrop.css';
@@ -44,7 +47,12 @@ function centerAspectCrop(
   )
 }
 
-export default function ImageUploader() {
+interface ImageUploaderProps {
+  userId: string;
+}
+
+const ImageUploader: FC<ImageUploaderProps> = ({ userId }) => {
+  
   const [imgSrc, setImgSrc] = useState('')
   const previewCanvasRef = useRef<HTMLCanvasElement>(null)
   const imgRef = useRef<HTMLImageElement>(null)
@@ -56,7 +64,7 @@ export default function ImageUploader() {
   const [rotate, setRotate] = useState(0)
   const [aspect, setAspect] = useState<number | undefined>(4 / 3)
 
-  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const {isOpen, onOpen, onOpenChange ,onClose} = useDisclosure();
 
   function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
@@ -75,6 +83,8 @@ export default function ImageUploader() {
       setCrop(centerAspectCrop(width, height, aspect))
     }
   }
+
+  const dispatch = useDispatch<AppDispatch>();
 
   async function onDownloadCropClick() {
     const image = imgRef.current
@@ -120,10 +130,33 @@ export default function ImageUploader() {
     }
     blobUrlRef.current = URL.createObjectURL(blob)
 
-    if (hiddenAnchorRef.current) {
-      hiddenAnchorRef.current.href = blobUrlRef.current
-      hiddenAnchorRef.current.click()
-    }
+
+    const formData = new FormData();
+    formData.append("photo", blob, "photo.png"); // Add the blob with a filename
+
+    dispatch({
+      type: "apiRequest",
+      payload: {
+        url: `user/upload-photo`,
+        method: "POST",
+        onSuccess: "uploadProfilePhoto",
+        onError: "GLOBAL_MESSAGE",
+        dispatchType: "uploadProfilePhoto",
+        body: formData,
+        params: { userId },
+        headers: { "Content-Type": "multipart/form-data" },
+      },
+    });
+
+    // if (hiddenAnchorRef.current) {
+    //   hiddenAnchorRef.current.href = blobUrlRef.current
+    //   console.log('hiddenAnchorRef.current', hiddenAnchorRef.current);
+    //   hiddenAnchorRef.current.click()
+    // }
+
+    // Modal Close
+    onClose();
+
   }
 
   useDebounceEffect(
@@ -178,10 +211,10 @@ export default function ImageUploader() {
             <ModalContent>
                 {(onClose) => (
                     <>
-                    <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
+                    <ModalHeader className="flex flex-col gap-1">Profile picture</ModalHeader>
                         <ModalBody>
                         <div className="Crop-Controls">
-                            <input type="file" accept="image/*" onChange={onSelectFile} />
+                            <Input type="file" accept="image/*" onChange={onSelectFile} />
                             {/* <div>
                             <label htmlFor="scale-input">Scale: </label>
                             <input
@@ -246,21 +279,17 @@ export default function ImageUploader() {
                             </div>
                             <div>
                                 <Button color='primary' onClick={onDownloadCropClick}>Upload</Button>
-                                <div style={{ fontSize: 12, color: '#666' }}>
-                                If you get a security error when downloading try opening the
-                                Preview in a new tab (icon near top right).
-                                </div>
                                 <a
-                                href="#hidden"
-                                ref={hiddenAnchorRef}
-                                download
-                                style={{
-                                    position: 'absolute',
-                                    top: '-200vh',
-                                    visibility: 'hidden',
-                                }}
+                                  href="#hidden"
+                                  ref={hiddenAnchorRef}
+                                  download
+                                  style={{
+                                      position: 'absolute',
+                                      top: '-200vh',
+                                      visibility: 'hidden',
+                                  }}
                                 >
-                                Hidden download
+                                  Hidden download
                                 </a>
                             </div>
                             </>
@@ -273,3 +302,5 @@ export default function ImageUploader() {
     </div>
   )
 }
+
+export default ImageUploader;

@@ -20,11 +20,24 @@ export default function RegisterPage() {
   const dispatch = useDispatch<AppDispatch>();
   const globalMessage = useSelector((state: RootState) => state.global);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+  const [permission, setPermission] = useState<string[]>([]);
+  const handleMultipleSelect = (values: []) => {
+    setPermission(values);
+  }
+
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const handleSelectChange  = (e: any) => {
+    setIsAdmin(e.target.value !== "student");
+  }
+
+  console.log({isAdmin});
+
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
-
+    data.adminPermissions = permission;
     dispatch({
       type: "apiRequest",
       payload: {
@@ -45,6 +58,13 @@ export default function RegisterPage() {
     { key: "student", label: "Student" },
   ];
 
+  const adminPermissionsTypes = [
+    { key: "attendance", label: "Attendance" },
+    { key: "profile_update", label: "Profile update" },
+    { key: "account_delete", label: "Account delete" },
+    { key: "fee_update", label: "Fee update" },
+  ];
+
   return (
     <div className="w-96">
       {globalMessage?.message ? (
@@ -63,12 +83,25 @@ export default function RegisterPage() {
       ) : null}
       <Form className="gap-4" id="register_form" onSubmit={handleSubmit}>
         <div className="flex justify-between w-full">
-          <Select className="w-full" name="userType" placeholder="Select role">
+          <Select className="w-full" name="userType" placeholder="Select role" onChange={handleSelectChange}>
             {userTypes.map((role) => (
               <SelectItem key={role.key}>{role.label}</SelectItem>
             ))}
           </Select>
         </div>
+        {isAdmin ? <div className="flex justify-between w-full">
+          <Select
+            className="w-full"
+            name="adminPermissions"
+            selectionMode="multiple"
+            placeholder="Select permissions"
+            onSelectionChange={(e) => handleMultipleSelect(Array.from(e).map(String))}
+          >
+            {adminPermissionsTypes.map((permission, i) => (
+              <SelectItem key={permission.key}>{permission.label}</SelectItem>
+            ))}
+          </Select>
+        </div> : null }
         <Input
           errorMessage="Error message"
           name="email"

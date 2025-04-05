@@ -12,7 +12,8 @@ pnpm-debug.log*
 
 # Build artifacts  
 dist/
-backend/node_modules/  
+backend/node_modules/
+backend/uploads/
 build/  
 out/  
 .next/

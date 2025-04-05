@@ -8,10 +8,30 @@ const routerUsers = express.Router();
 const jwt = require('jsonwebtoken');
 const { verifyToken } = require('./isAuth');
 const { User, UserRegister } = require('./schema/Users/user');
+
+const fs = require('fs');
+const path = require("path");
+const multer = require("multer");
+const sharp = require("sharp");
+
 // const UserLogin = require('./schema/Users/userLogin');
 // const UserRegister = require('./schema/Users/userRegister');
 
 routerUsers.post("/", async (req, res) => {
+    try {
+        const { class_current } = req.body;
+        if (!class_current) {
+            return res.status(400).json({ error: "Class is required" });
+        }
+        const studentDetails = await User.find({ class_current });                  
+        console.log({studentDetails});
+        res.json(studentDetails);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+routerUsers.post("/counter", async (req, res) => {
     try {
         const { class_current } = req.body;
         if (!class_current) {
@@ -49,7 +69,7 @@ const generateUserId = async (userType) => {
 
 routerUsers.post("/register", async (req, res) => {
     try {
-        const { password, email, userType } = req.body.userInfo;
+        const { password, email, userType, adminPermissions } = req.body.userInfo;
         if (!password || !email) {
             return res.status(400).json({ error: "Name and Email are required" });
         }
@@ -65,7 +85,8 @@ routerUsers.post("/register", async (req, res) => {
             password: hashedPassword,
             email,
             userId,
-            userType
+            userType,
+            adminPermissions
         });
         await newUser.save();
         res.status(201).json({ message: "User saved!", user: newUser });
@@ -167,6 +188,32 @@ routerUsers.post('/login', async (req, res) => {
     
 });
 
+// Multer config
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+routerUsers.post("/upload-photo", upload.single("photo"), async (req, res) => {
+    try {
+      const { buffer, originalname } = req.file;
+      const { userId } = req.query
+      const filename = `${userId}-${originalname}`;
+      const outputPath = path.join(__dirname, "../uploads", filename);
+  
+    //   // Crop and save
+      await sharp(buffer)
+        .resize({ width: 300, height: 300 }) // Optional: resize to fixed crop size
+        .toFile(outputPath);
+  
+      // Optional: store path or metadata in MongoDB
+      // await db.collection('images').insertOne({ path: outputPath, ... })
+  
+      res.status(200).json({ message: "Image uploaded", path: filename });
+    } catch (error) {
+      console.error("Upload error:", error);
+      res.status(500).json({ error: "Upload failed" });
+    }
+  });
+
 routerUsers.get("/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -179,6 +226,7 @@ routerUsers.get("/:id", async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
 
 routerUsers.get("/logout", (req, res) => {
     res.clearCookie("auth", { httpOnly: true, secure: true, sameSite: "Strict" });

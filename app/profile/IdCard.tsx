@@ -10,7 +10,7 @@ interface IDCardProps {
 const IDCard: React.FC<IDCardProps> = ({ details }) => {
 
     const fullName = (`${details?.firstName} ${details?.lastName}`)?.toUpperCase();
-
+    console.log({details});
     return (
         <div className="flex">
             <div className="id-card relative z-1 rounded-lg border-1">
@@ -26,12 +26,13 @@ const IDCard: React.FC<IDCardProps> = ({ details }) => {
                     </div>
                     <div className="font-bold mb-4 text-2xl text-center">
                         {fullName}
+                        {details?.adminRole ? <p className="text-sm text-slate-500">{details?.adminRole.toUpperCase()}</p> : null}
                     </div>
                     <div className="id-details">
-                        <div>
+                        {details?.userType === 'student' ? <div>
                             <div className="text-sm font-semibold">CLASS</div>
                             <div className="bold">{details?.class_current}</div>
-                        </div>
+                        </div> : null}
                         <div>
                             <div className="text-sm font-semibold">ID</div>
                             <div className="bold">{details?.userId}</div>
@@ -43,7 +44,7 @@ const IDCard: React.FC<IDCardProps> = ({ details }) => {
                     </div>
                     <Divider  className="my-2" />
                     <div className="text-xs mt-2">
-                        <p className="font-semibold">{details?.fatherName}, {details?.motherName}</p>
+                        {!details?.adminRole ? <p className="font-semibold">{details?.fatherName}, {details?.motherName}</p> : null}
                         <p>Address: {details?.address}</p>
                         <p>Phone: {details?.phone}, {details?.alternatePhone}</p>
                     </div>

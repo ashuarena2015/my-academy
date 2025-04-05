@@ -1,0 +1,74 @@
+.id-card {
+    display: flex;
+    flex-direction: column;
+    width: 280px;
+    height: 490px;
+    padding: 0.5rem;
+    background-color: #f6f6f6;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    font-family: Arial, sans-serif;
+    margin-bottom: 1rem;
+}
+.id-header {
+    display: flex;
+    height: 32px;
+}
+.id-header div:first-child {
+    background-color: rgb(231, 160, 68);
+    width: 30%;
+}
+
+.id-header div:last-child {
+    background-color: rgb(250, 207, 16);
+    width: 70%;
+}
+
+.id-footer {
+    display: flex;
+    height: 16px;
+}
+.id-footer div:first-child {
+    background-color: rgb(85, 201, 55);
+    width: 70%;
+}
+
+.id-footer div:last-child {
+    background-color: rgb(28, 152, 32);
+    width: 30%;
+}
+
+.id-body {
+    padding: 0.5rem;
+    height: 430px;
+}
+
+.id-details {
+    display: flex;
+    justify-content: space-between;
+}
+
+.id-img {
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+    margin: 10px auto;
+    max-width: none !important;
+    overflow: hidden;
+}
+
+.id-img img {
+    margin: auto;
+}
+
+.id-img-flex {
+    height: 150px;
+    width: 150px;
+    margin: 10px auto;
+    border-radius: 50%;
+    max-width: none !important;
+    overflow: hidden;
+}
+
+.id-img-flex img {
+    margin: auto;
+}

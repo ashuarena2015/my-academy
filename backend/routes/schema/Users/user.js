@@ -23,6 +23,7 @@ const UserSchema = new mongoose.Schema(
     admission_class: { type: String },
     doa: { type: String },
     academic_session: { type: String },
+    adminPermissions: { type: Array, default: [] },
   },
   { timestamps: true, discriminatorKey: "kind" },
 );

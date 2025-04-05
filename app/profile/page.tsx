@@ -18,6 +18,9 @@ import AlertMessage from "../components/alert";
 import { RootState, AppDispatch } from "../api/store";
 import { academicSessions, classes } from './common';
 
+import ImageUploader from '../components/imageUploader/imageUploader';
+import IDCard from "./IdCard";
+
 export default function ProfilePage() {
   const dispatch = useDispatch<AppDispatch>();
   const globalMessage = useSelector((state: RootState) => state.global);
@@ -219,7 +222,7 @@ export default function ProfilePage() {
 
   return (
     prefilledInfo ?
-      <div>
+      <div className="grid grid-cols-3 w-full p-4">
         {/* {globalMessage?.message ? (
             <AlertMessage
               message={globalMessage?.message}
@@ -234,69 +237,75 @@ export default function ProfilePage() {
               }
             />
           ) : null} */}
-        <Form validationBehavior="aria">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <h2 className="font-bold pb-2">Personal details</h2>
-              <hr className="w-full" />
-              <div className="grid gap-4 mt-4">
-                <div className="flex justify-between w-full">
-                  {getInputField({ name: "firstName", errorMessage: "Please enter first name", placeholder: "Enter your firstname", type: "text", label: "First name", isDisabled: false })}
-                  {getInputField({ name: "lastName", errorMessage: "Please enter last name", placeholder: "Enter your lastname", type: "text", label: "Last name", classNames: "ml-2", isDisabled: false })}
-                </div>
-                <div className="flex justify-between w-full">
-                  {getInputField({ name: "email", errorMessage: "Please enter email", placeholder: "Enter your email", type: "email", label: "email", isDisabled: true })}
-                </div>
-                <div className="flex justify-between w-full">
-                  {getInputField({ name: "phone", errorMessage: "Please enter phone", placeholder: "Enter your phone", type: "number", label: "Phone", isDisabled: false })}
-                  {getInputField({ name: "alternatePhone", errorMessage: "Please enter Alternate Phone", placeholder: "Enter your alternate Phone", type: "number", label: "Alternate Phone", classNames: "ml-2", isDisabled: false })}
-                </div>
-                <div className="flex justify-between w-full">
-                  {getInputField({ name: "address", errorMessage: "Please enter address", placeholder: "Enter your Address", type: "text", label: "Address", isDisabled: false })}
-                </div>
-                <div className="flex justify-between">
-                  {getDatePicker({ name: "dob", label: "Birth date", placeholder: "Select your birth date", classNames: "text-left w-1/2", defaultValue: changedDob ? format(changedDob, "yyyy-MM-dd") : "" })}
-                </div>
-                {!userInputInfo?.adminRole ?
-                  <>
-                  <h2 className="font-bold mt-2">Academic details</h2>
-                  <hr className="w-full" />
-                  <div className="flex">
-                    {getSelectField({ name: "admission_class", placeholder: "Select", label: "Admission class", classNames: "w-full", options: classes() })}
-                    {getDatePicker({ name: "doa", label: "Admission date", placeholder: "Select your Admission date", classNames: "text-left ml-2", defaultValue: changedDoa ? format(changedDoa, "yyyy-MM-dd") : "" })}
-                  </div>
-                  <div className="flex justify-between w-full">
-                    {getSelectField({ name: "class_current", placeholder: "Select", label: "Current class", classNames: "w-full", options: classes() })}
-                    {getSelectField({ name: "academic_session", placeholder: "Select", label: "Academic session", classNames: "w-full ml-2", options: academicSessions() })}
-                  </div>
-                  </> : null }
-                </div>
-            </div>
-            <div>
-              {!userInputInfo?.adminRole ?
-              (<>
-                <h2 className="font-bold pb-2">Parent details</h2>
+        <div className="col-span-2">
+          <Form validationBehavior="aria">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h2 className="font-bold pb-2">Personal details</h2>
                 <hr className="w-full" />
-                <div className="grid gap-4">
-                  <div className="flex justify-between w-full mt-4">
-                    {getInputField({ name: "fatherName", errorMessage: "Please enter father name", placeholder: "Enter your father name", type: "text", label: "Father's name", isDisabled: false })}
+                <div className="grid gap-4 mt-4">
+                  <div className="flex justify-between w-full">
+                    {getInputField({ name: "firstName", errorMessage: "Please enter first name", placeholder: "Enter your firstname", type: "text", label: "First name", isDisabled: false })}
+                    {getInputField({ name: "lastName", errorMessage: "Please enter last name", placeholder: "Enter your lastname", type: "text", label: "Last name", classNames: "ml-2", isDisabled: false })}
                   </div>
                   <div className="flex justify-between w-full">
-                    {getInputField({ name: "motherName", errorMessage: "Please enter mother name", placeholder: "Enter your mother name", type: "text", label: "Mother's name", isDisabled: false })}
+                    {getInputField({ name: "email", errorMessage: "Please enter email", placeholder: "Enter your email", type: "email", label: "email", isDisabled: true })}
                   </div>
-                </div>
-                </>) : null}
-            </div>
-        </div>
-        <div className="flex w-auto mt-8">
-          <Button color="primary" onClick={handleSubmit}>
-            Update
-          </Button>
-          <Link className="text-sm whitespace-nowrap ml-4" href="#" underline="always">
-            Change password
-          </Link>
-        </div>
-      </Form>
+                  <div className="flex justify-between w-full">
+                    {getInputField({ name: "phone", errorMessage: "Please enter phone", placeholder: "Enter your phone", type: "number", label: "Phone", isDisabled: false })}
+                    {getInputField({ name: "alternatePhone", errorMessage: "Please enter Alternate Phone", placeholder: "Enter your alternate Phone", type: "number", label: "Alternate Phone", classNames: "ml-2", isDisabled: false })}
+                  </div>
+                  <div className="flex justify-between w-full">
+                    {getInputField({ name: "address", errorMessage: "Please enter address", placeholder: "Enter your Address", type: "text", label: "Address", isDisabled: false })}
+                  </div>
+                  <div className="flex justify-between">
+                    {getDatePicker({ name: "dob", label: "Birth date", placeholder: "Select your birth date", classNames: "text-left w-1/2", defaultValue: changedDob ? format(changedDob, "yyyy-MM-dd") : "" })}
+                    <ImageUploader userId={loginUser?.userId} />
+                  </div>
+                  {!userInputInfo?.adminRole ?
+                    <>
+                    <h2 className="font-bold mt-2">Academic details</h2>
+                    <hr className="w-full" />
+                    <div className="flex">
+                      {getSelectField({ name: "admission_class", placeholder: "Select", label: "Admission class", classNames: "w-full", options: classes() })}
+                      {getDatePicker({ name: "doa", label: "Admission date", placeholder: "Select your Admission date", classNames: "text-left ml-2", defaultValue: changedDoa ? format(changedDoa, "yyyy-MM-dd") : "" })}
+                    </div>
+                    <div className="flex justify-between w-full">
+                      {getSelectField({ name: "class_current", placeholder: "Select", label: "Current class", classNames: "w-full", options: classes() })}
+                      {getSelectField({ name: "academic_session", placeholder: "Select", label: "Academic session", classNames: "w-full ml-2", options: academicSessions() })}
+                    </div>
+                    </> : null }
+                  </div>
+              </div>
+              <div>
+                {!userInputInfo?.adminRole ?
+                (<>
+                  <h2 className="font-bold pb-2">Parent details</h2>
+                  <hr className="w-full" />
+                  <div className="grid gap-4">
+                    <div className="flex justify-between w-full mt-4">
+                      {getInputField({ name: "fatherName", errorMessage: "Please enter father name", placeholder: "Enter your father name", type: "text", label: "Father's name", isDisabled: false })}
+                    </div>
+                    <div className="flex justify-between w-full">
+                      {getInputField({ name: "motherName", errorMessage: "Please enter mother name", placeholder: "Enter your mother name", type: "text", label: "Mother's name", isDisabled: false })}
+                    </div>
+                  </div>
+                  </>) : null}
+              </div>
+          </div>
+          <div className="flex w-auto mt-8">
+            <Button color="primary" onClick={handleSubmit}>
+              Update
+            </Button>
+            <Link className="text-sm whitespace-nowrap ml-4" href="#" underline="always">
+              Change password
+            </Link>
+          </div>
+        </Form>
+      </div>
+      <div className="col-span-1">
+        <IDCard details={loginUser || []} />
+      </div>
     </div> : null
   );
 }
