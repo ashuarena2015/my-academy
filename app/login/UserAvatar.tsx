@@ -38,6 +38,8 @@ const UserAvatar = React.memo(() => {
     }
   }
 
+  const profilePic = `http://localhost:3001/uploads/${loginUser?.userId}-photo.png` || `http://localhost:3001/uploads/default-avatar.webp`;
+
   return (
     <div className="flex items-center gap-4">
       <Dropdown placement="bottom-start">
@@ -46,7 +48,7 @@ const UserAvatar = React.memo(() => {
             as="button"
             avatarProps={{
               isBordered: true,
-              src: `http://localhost:3001/uploads/${loginUser?.userId}-photo.png`,
+              src: profilePic,
             }}
             className="transition-transform"
             description={loginUser?.adminRole?.toUpperCase()}

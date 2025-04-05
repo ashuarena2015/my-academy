@@ -13,7 +13,7 @@ import {
     Input
 } from "@heroui/react";
 import FeeTableList from "../../fee/feeTable";
-import IDCard from "./IdCard"
+import IDCard from "../../profile/IdCard";
 import ImageUploader from '../../components/imageUploader/imageUploader';
 
 const StudentDetails: FC = () => {
@@ -59,6 +59,8 @@ const StudentDetails: FC = () => {
         }
     }
 
+    const profilePhoto = currentUser?.profilePhoto ? `http://localhost:3001/uploads/${currentUser?.profilePhoto}` : `http://localhost:3001/uploads/default-avatar.png`;
+
     return (
         <div className="w-full grid grid-cols-5 gap-4">
             <div className="col-span-3">
@@ -82,7 +84,7 @@ const StudentDetails: FC = () => {
                                 alt="heroui logo"
                                 height={80}
                                 radius="sm"
-                                src={`http://localhost:3001/uploads/${currentUser?.userId}-photo.png`}
+                                src={profilePhoto}
                                 width={80}
                                 className="rounded-full border-default-200 mb-1"
                             />                        

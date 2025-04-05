@@ -10,7 +10,7 @@ interface IDCardProps {
 const IDCard: React.FC<IDCardProps> = ({ details }) => {
 
     const fullName = (`${details?.firstName} ${details?.lastName}`)?.toUpperCase();
-    console.log({details});
+    const profilePhoto = details?.profilePhoto ? `http://localhost:3001/uploads/${details?.profilePhoto}` : `http://localhost:3001/uploads/default-avatar.png`;
     return (
         <div className="flex">
             <div className="id-card relative z-1 rounded-lg border-1">
@@ -22,7 +22,7 @@ const IDCard: React.FC<IDCardProps> = ({ details }) => {
                         <Image as={NextImage} src="/logo.png" alt="Logo" className="m-auto" width={'200'} height={'60'} />
                     </div>
                     <div className="w-full id-img">
-                        <Image className="rounded-none" removeWrapper={true} src={`http://localhost:3001/uploads/${details?.userId}-photo.png`} />
+                        <Image className="rounded-none" removeWrapper={true} src={profilePhoto} />
                     </div>
                     <div className="font-bold mb-4 text-2xl text-center">
                         {fullName}

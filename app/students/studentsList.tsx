@@ -40,6 +40,7 @@ export interface UserType {
   lastName: string;  // Added lastName property
   email: string;     // Added email property
   status: boolean;   // Added status property
+  profilePhoto: string;
 }
 
 const StudentsList: React.FC = () => {
@@ -58,6 +59,7 @@ const StudentsList: React.FC = () => {
       lastName: user.lastName || "",
       email: user.email || "",
       status: user.status || false,
+      profilePhoto: user.profilePhoto || "",
     }))
   );
 
@@ -135,12 +137,26 @@ const StudentsList: React.FC = () => {
                     <TableCell>{student.userId}</TableCell>
                     <TableCell>{student.doa}</TableCell>
                     <TableCell>
-                      <div>
+                      <User
+                        as="button"
+                        avatarProps={{
+                          isBordered: true,
+                          src: student?.profilePhoto ? `http://localhost:3001/uploads/${student?.profilePhoto}` : `http://localhost:3001/uploads/default-avatar.png`,
+                        }}
+                        className="transition-transform"
+                        description={student?.email}
+                        name={
+                          student?.firstName
+                            ? `${student?.firstName} ${student?.lastName}`
+                            : student?.email
+                        }
+                      />
+                      {/* <div>
                         <Link showAnchorIcon color="foreground" size="sm" href={`/students/${student.userId}`} className="font-semibold">
                           {student.firstName} {student.lastName}
                         </Link>
                       </div>
-                      <small className="text-slate-600">{student.email}</small>
+                      <small className="text-slate-600">{student.email}</small> */}
                     </TableCell>
                     <TableCell>{student.phone}</TableCell>
                     <TableCell><address>{student.address}</address></TableCell>

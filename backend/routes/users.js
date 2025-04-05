@@ -207,6 +207,14 @@ routerUsers.post("/upload-photo", upload.single("photo"), async (req, res) => {
       // Optional: store path or metadata in MongoDB
       // await db.collection('images').insertOne({ path: outputPath, ... })
   
+      const updatedUser = await User.findOneAndUpdate(
+        { userId: userId },
+        { $set: { profilePhoto: filename } },
+        { new: true }
+      );
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
       res.status(200).json({ message: "Image uploaded", path: filename });
     } catch (error) {
       console.error("Upload error:", error);
