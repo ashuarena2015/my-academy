@@ -215,7 +215,7 @@ routerUsers.post("/upload-photo", upload.single("photo"), async (req, res) => {
       if (!updatedUser) {
         return res.status(404).json({ message: "User not found" });
       }
-      res.status(200).json({ message: "Image uploaded", path: filename });
+      res.status(200).json({ message: "Image uploaded", path: filename, photoUrl: updatedUser.profilePhoto });
     } catch (error) {
       console.error("Upload error:", error);
       res.status(500).json({ error: "Upload failed" });

@@ -139,7 +139,7 @@ const ImageUploader: FC<ImageUploaderProps> = ({ userId }) => {
       payload: {
         url: `user/upload-photo`,
         method: "POST",
-        onSuccess: "uploadProfilePhoto",
+        onSuccess: "users/uploadProfilePhoto",
         onError: "GLOBAL_MESSAGE",
         dispatchType: "uploadProfilePhoto",
         body: formData,

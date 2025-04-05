@@ -117,6 +117,14 @@ const api =
         });
         return true;
       }
+      if(dispatchType === "uploadProfilePhoto") {
+        console.log({dispatchType, response});
+        dispatch({
+          type: "users/uploadProfilePhoto",
+          payload: response?.data,
+        });
+        return true;
+      }
     } catch (error: any) {
       if(error?.status !== 403) {
         dispatch({

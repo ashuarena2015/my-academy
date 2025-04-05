@@ -19,11 +19,11 @@ import {
 import { RootState } from "../api/store";
 
 import { classes } from '../profile/common';
+import { useRouter } from "next/navigation";
 
 export const columns = [
-  { name: "ID", uid: "id" },
-  { name: "Admission date", uid: "doa" },
   { name: "Name", uid: "name" },
+  { name: "Admission date", uid: "doa" },
   { name: "Phone", uid: "phone" },
   { name: "Address", uid: "address" },
   { name: "Status", uid: "status" },
@@ -46,6 +46,7 @@ export interface UserType {
 const StudentsList: React.FC = () => {
 
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const users: UserType[] = useSelector((state: RootState) =>
     state.users.users.map((user) => ({
@@ -128,14 +129,12 @@ const StudentsList: React.FC = () => {
           <TableBody>
             {!users?.length ? 
               <TableRow>
-                <TableCell colSpan={6}>No records found!</TableCell>
+                <TableCell colSpan={5}>No records found!</TableCell>
               </TableRow>
               : 
               users?.map((student: UserType, i) => {
                 return (
                   <TableRow key={i}>
-                    <TableCell>{student.userId}</TableCell>
-                    <TableCell>{student.doa}</TableCell>
                     <TableCell>
                       <User
                         as="button"
@@ -144,12 +143,13 @@ const StudentsList: React.FC = () => {
                           src: student?.profilePhoto ? `http://localhost:3001/uploads/${student?.profilePhoto}` : `http://localhost:3001/uploads/default-avatar.png`,
                         }}
                         className="transition-transform"
-                        description={student?.email}
+                        description={`${student?.email} / ${student.userId}`}
                         name={
                           student?.firstName
                             ? `${student?.firstName} ${student?.lastName}`
                             : student?.email
                         }
+                        onClick={() => router.push(`/students/${student.userId}`)}
                       />
                       {/* <div>
                         <Link showAnchorIcon color="foreground" size="sm" href={`/students/${student.userId}`} className="font-semibold">
@@ -158,6 +158,7 @@ const StudentsList: React.FC = () => {
                       </div>
                       <small className="text-slate-600">{student.email}</small> */}
                     </TableCell>
+                    <TableCell>{student.doa}</TableCell>
                     <TableCell>{student.phone}</TableCell>
                     <TableCell><address>{student.address}</address></TableCell>
                     <TableCell>{getStatus(student.status)}</TableCell>

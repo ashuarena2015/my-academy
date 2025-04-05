@@ -53,11 +53,17 @@ const usersSlice = createSlice({
     },
     getUserDetail: (state, action: PayloadAction<{ user: User }>) => {
       state.currentUser = action.payload;
+    },
+    uploadProfilePhoto: (state, action: PayloadAction<{ userId: string; photoUrl: string }>) => {
+      console.log('action.payload', action.payload);
+      if (state.currentUser) {
+        state.currentUser.profilePhoto = action.payload.photoUrl;
+      }
     }
   },
 });
 
 // Export actions & reducer
-export const { getUsers, isLoading, getLoginDetails, logoutUser, getUserDetail } =
+export const { getUsers, isLoading, getLoginDetails, logoutUser, getUserDetail, uploadProfilePhoto } =
   usersSlice.actions;
 export default usersSlice.reducer;
