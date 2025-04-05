@@ -85,25 +85,13 @@ export default function ProfilePage() {
       });
       setChangedDob(
         loginUser?.dob
-          ? format(
-              parse(loginUser?.dob, "dd-MM-yyyy", new Date()),
-              "yyyy-MM-dd",
-            )
-          : format(
-            parse("01-01-1970", "dd-MM-yyyy", new Date()),
-            "yyyy-MM-dd",
-          ),
+          ? parse(loginUser?.dob, "dd-MM-yyyy", new Date())
+          : parse("01-01-1970", "dd-MM-yyyy", new Date()),
       );
       setChangedDoa(
         loginUser?.doa
-          ? format(
-              parse(loginUser?.doa, "dd-MM-yyyy", new Date()),
-              "yyyy-MM-dd",
-            )
-          : format(
-            parse("01-01-1970", "dd-MM-yyyy", new Date()),
-            "yyyy-MM-dd",
-          ),
+          ? parse(loginUser?.doa, "dd-MM-yyyy", new Date())
+          : parse("01-01-1970", "dd-MM-yyyy", new Date()),
       );
       setPrefilledInfo(true);
     }
@@ -294,7 +282,7 @@ export default function ProfilePage() {
               </div>
           </div>
           <div className="flex w-auto mt-8">
-            <Button color="primary" onClick={handleSubmit}>
+            <Button color="primary" onClick={(e) => { e.preventDefault(); handleSubmit(e as unknown as React.FormEvent<HTMLFormElement>); }}>
               Update
             </Button>
             <Link className="text-sm whitespace-nowrap ml-4" href="#" underline="always">

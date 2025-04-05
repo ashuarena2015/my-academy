@@ -21,7 +21,7 @@ const FeeTableList: FC = () => {
   const [academicSession, setAcademicSession] = useState<string>(academicSessions()[0]?.key || "");
   const [classCurrent, setClassCurrent] = useState<string>(classes()[0]?.key || "");
   const [studentId, setStudentId] = useState<string>(typeof id === 'string' ? id : '');
-  const [annualFeeInfo, setAnnualFeeInfo] = useState(null);
+  const [annualFeeInfo, setAnnualFeeInfo] = useState<{ annualFee: number } | null>(null);
 
   const [academicYear, setAcademicYear] = useState({
     startDate: "2025-04-01",
@@ -135,11 +135,11 @@ const FeeTableList: FC = () => {
                             </TableCell>
                             <TableCell>{annualFeeInfo?.annualFee}</TableCell>
                             <TableCell>{fee.totalAmount }</TableCell>
-                            <TableCell>{getDueAmount(annualFeeInfo?.annualFee, fee.totalAmount)}</TableCell>
+                            <TableCell>{getDueAmount(annualFeeInfo?.annualFee ?? 0, fee.totalAmount)}</TableCell>
                         </TableRow>
                       )
                     })
-                  : feeDetailsInfo[0]?.payments?.map((fee, i) => {
+                  : feeDetailsInfo[0]?.payments?.map((fee: { amount_paid: number; payment_date: string; payment_mode: string }, i: any) => {
                       return (
                         <TableRow key={i}>
                             <TableCell>{fee?.amount_paid}</TableCell>

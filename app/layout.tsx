@@ -11,10 +11,10 @@ import MainLayout from "./mainLayout";
 
 export const metadata: Metadata = {
   title: {
-    default: siteConfig().name,
-    template: `%s - ${siteConfig().name}`,
+    default: siteConfig({}).name,
+    template: `%s - ${siteConfig({}).name}`,
   },
-  description: siteConfig().description,
+  description: siteConfig({}).description,
   icons: {
     icon: "/favicon.ico",
   },
