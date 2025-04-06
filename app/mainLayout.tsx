@@ -4,14 +4,15 @@ import { Spinner } from "@heroui/react";
 import { FC, useEffect } from "react";
 import SideBar from "@/components/sidebar";
 import { Navbar } from "@/components/navbar";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useRouter, usePathname} from "next/navigation";
-import { RootState } from "./api/store";
+import { RootState, AppDispatch } from "./api/store";
 
 const MainLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
     const { loginUser, isLoading } = useSelector((state: RootState) => state.users, (prev, next) => prev === next);
     const router = useRouter();
     const pathname = usePathname();
+    const dispatch = useDispatch<AppDispatch>();
     useEffect(() => {
         if(!isLoading && !loginUser?.email) {
             router.replace('/login')
@@ -22,12 +23,25 @@ const MainLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
         }
     }, [loginUser, isLoading]);
 
+    useEffect(() => {
+        dispatch({
+            type: "apiRequest",
+            payload: {
+              url: `user/counter`,
+              method: "GET",
+              onSuccess: "users/usersCounter",
+              onError: "GLOBAL_MESSAGE",
+              dispatchType: "usersCounter"
+            },
+          });
+    }, []);
+
     return (
         <div className="flex w-full justify-start">
             <div className="w-9" style={{ width: "350px" }}>
                 <SideBar />
             </div>
-            <div className="w-full relative bg-zinc-50 h-screen">
+            <div className="w-full relative bg-zinc-50 min-h-screen">
                 <Navbar />
                 <main className="w-full p-5 pt-2 col-span-5">
                     <div className="mt-10 p-5 rounded-xl border-">{children}</div>

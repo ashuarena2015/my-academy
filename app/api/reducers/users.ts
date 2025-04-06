@@ -18,6 +18,7 @@ interface UsersState {
   totalExpenses?: number;
   students: any[];
   currentUser: User | null;
+  userCounter: {}
 }
 
 // Initial state with TypeScript
@@ -28,7 +29,8 @@ const initialState: UsersState = {
   loginUser: {},
   userAttributes: [],
   students: [],
-  currentUser: []
+  currentUser: [],
+  userCounter: {}
 };
 
 // Create slice with TypeScript
@@ -59,6 +61,9 @@ const usersSlice = createSlice({
       if (state.currentUser) {
         state.currentUser.profilePhoto = action.payload.photoUrl;
       }
+    },
+    usersCounter: (state, action: PayloadAction<{ userCounter: UsersState['userCounter'] }>) => {
+      state.userCounter = action.payload.userCounter;
     }
   },
 });

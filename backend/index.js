@@ -1,47 +1,77 @@
-// const fs  = require('fs');
-// const http = require('http');
-// const url = require('url');
-
-// const server = http.createServer((req, res) => {
-
-//     const pathName = req.url;
-
-//     if(pathName === '/dashboard') {
-//         res.end('This is dashboard');
-//     } else if(pathName === '/users') {
-
-//         fs.readFile(`./data/users.json`, 'utf-8', (err, data) => {
-//             const usersData = data;
-//             res.writeHead(200, { 'Content-type': 'application/json', 'Access-Control-Allow-Origin': "*" });
-//             // res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-//             // res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");});
-//             res.end(usersData);
-//         })
-
-//     } else {
-//         res.end('This is normal pages.');
-//     }
-// })
-
-// server.listen('3001', '127.0.0.1', () => {
-//     console.log('Listening from server!');
-// })
-
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 const express = require("express");
 const app = express();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
+const path = require("path");
+import { MongoClient } from "mongodb";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const { routerUsers } = require('./routes/users');
 const { routerFee } = require('./routes/fee');
-const path = require("path");
 
-const MONGO_URI = "mongodb://127.0.0.1:27017/my-academy";
+const MONGO_URI_LOCAL = "mongodb://127.0.0.1:27017/my-academy";
+
+/*** FOR MIGRATION ONLY
+ * 
+ * 
+// const MONGO_URI_CLOUD = "mongodb+srv://ashuarena:ashuarena@cluster0.teyrnb7.mongodb.net/my-academy?retryWrites=true&w=majority&appName=Cluster0";
+
+// const localUri = MONGO_URI_LOCAL;
+// const cloudUri = MONGO_URI_CLOUD;
+
+// const migrate = async () => {
+//   const localClient = new MongoClient(localUri);
+//   const cloudClient = new MongoClient(cloudUri);
+
+// try {
+//   await localClient.connect();
+//   await cloudClient.connect();
+
+//   const localDB = localClient.db("my-academy");
+//   const cloudDB = cloudClient.db("my-academy");
+
+//   const collections = await localDB.listCollections().toArray();
+
+//   const data = await localDB.collection("users").find().toArray();
+//   for (const { name } of collections) {
+//     console.log(`Migrating collection: ${name}`);
+
+//     const data = await localDB.collection(name).find().toArray();
+
+//     if (data.length > 0) {
+//       await cloudDB.collection(name).deleteMany({}); // Optional: clear target first
+//       await cloudDB.collection(name).insertMany(data);
+//       console.log(`✅ Migrated ${data.length} documents to "${name}"`);
+//     } else {
+//       console.log(`⚠️ Collection "${name}" is empty. Skipped.`);
+//     }
+//   }
+
+//   console.log("🎉 Migration complete!");
+//   } catch (err) {
+//     console.error("❌ Migration failed:", err);
+//   } finally {
+//     await localClient.close();
+//     await cloudClient.close();
+//   };
+// }
+
+// migrate();
+
+*
+
+*****/
 
 // ✅ Fix: Set a proper connection timeout
 mongoose
-  .connect(MONGO_URI, {
+  .connect(MONGO_URI_LOCAL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     serverSelectionTimeoutMS: 5000, // ⏳ Wait 5 sec before failing

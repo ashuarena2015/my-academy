@@ -31,15 +31,25 @@ routerUsers.post("/", async (req, res) => {
     }
 });
 
-routerUsers.post("/counter", async (req, res) => {
+routerUsers.get("/counter", async (req, res) => {
     try {
-        const { class_current } = req.body;
-        if (!class_current) {
-            return res.status(400).json({ error: "Class is required" });
-        }
-        const studentDetails = await User.find({ class_current });                  
-        console.log({studentDetails});
-        res.json(studentDetails);
+        const result = await User.aggregate([
+            {
+              $group: {
+                _id: "$userType",
+                count: { $sum: 1 }
+              }
+            }
+        ]);
+        const formatted = {};
+
+        result.forEach(({ _id, count }) => {
+        // Pluralize if needed
+        const key = _id.endsWith('s') ? _id : _id + 's';
+        formatted[key] = count;
+        });
+
+        res.json(formatted);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

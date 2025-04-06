@@ -49,8 +49,8 @@ const UserAvatar = React.memo(() => {
             avatarProps={{
               isBordered: true,
               src: profilePic,
+              className: "opacity-80 hover:opacity-100",
             }}
-            className="transition-transform"
             description={loginUser?.adminRole?.toUpperCase()}
             name={
               loginUser?.firstName

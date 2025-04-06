@@ -118,10 +118,18 @@ const api =
         return true;
       }
       if(dispatchType === "uploadProfilePhoto") {
-        console.log({dispatchType, response});
         dispatch({
           type: "users/uploadProfilePhoto",
           payload: response?.data,
+        });
+        return true;
+      }
+      if(dispatchType === "usersCounter") {
+        dispatch({
+          type: "users/usersCounter",
+          payload: {
+            userCounter: response?.data
+          }
         });
         return true;
       }

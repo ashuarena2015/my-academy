@@ -2,7 +2,7 @@
 
 import React, { FC, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
     Divider,
     Image,
@@ -10,7 +10,8 @@ import {
     Skeleton,
     Card,
     CardBody,
-    Input
+    Input,
+    Button
 } from "@heroui/react";
 import FeeTableList from "../../fee/feeTable";
 import IDCard from "../../profile/IdCard";
@@ -19,6 +20,7 @@ import ImageUploader from '../../components/imageUploader/imageUploader';
 const StudentDetails: FC = () => {
 
     const dispatch = useDispatch();
+    const router = useRouter();
     const { currentUser, loginUser: { userType: loginUserType } = {}  } = useSelector((state: any) => state.users);
 
     const params = useParams();
@@ -97,6 +99,16 @@ const StudentDetails: FC = () => {
                         </div>
                     </div>
                 )}
+                {loginUserType !== 'student' ?
+                    <Button
+                        color="primary"
+                        size="sm"
+                        className="mb-4"
+                        onClick={() => router.push(`/profile/${currentUser.userId}`)}
+                    >
+                        Profile update
+                    </Button>
+                : null}
                 <Divider />
                 <div className="py-5">
                     <div className="flex justify-between gap-4">
@@ -149,15 +161,6 @@ const StudentDetails: FC = () => {
                 <div className="mt-4">
                     <FeeTableList />
                 </div> : null }
-                {/* <div className="py-5">
-                    <p className="text-lg font-semibold mb-2">Fee details</p>
-                    <FeeTableList feeAllDetails={currentUser?.payments || []} />
-                </div> */}
-                {/* <div>
-                    <Link isExternal showAnchorIcon href="https://github.com/heroui-inc/heroui">
-                    Visit source code on GitHub.
-                    </Link>
-                </div> */}
             </div>
             <div className="col-span-2">
                 <IDCard details={currentUser || []} />

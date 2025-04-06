@@ -1,8 +1,12 @@
 import React from "react";
 import { Card, CardHeader, Avatar, Button } from "@heroui/react";
+import { useSelector } from "react-redux";
 
 const UserCount = () => {
-  console.log('UserCount');
+  const { userCounter } = useSelector(
+    (state: { users: { userCounter: number } }) => state.users,
+    (prev, next) => prev === next
+  );
   return (
     <div className="gap-4 justify-between grid grid-cols-2">
       <Card className="">
@@ -38,7 +42,7 @@ const UserCount = () => {
                 Students
               </h4>
               <h5 className="text-small tracking-tight text-default-400">
-                4237
+                {userCounter?.students || 0}
               </h5>
             </div>
           </div>
@@ -80,7 +84,7 @@ const UserCount = () => {
                 Staffs
               </h4>
               <h5 className="text-small tracking-tight text-default-400">
-                114
+              {userCounter?.staffs + userCounter?.teachers + userCounter?.admins + userCounter?.principals}
               </h5>
             </div>
           </div>

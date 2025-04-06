@@ -15,6 +15,7 @@ import {
   Card,
   CardBody,
   Link,
+  Button
 } from "@heroui/react";
 import { RootState } from "../api/store";
 
@@ -104,17 +105,20 @@ const StudentsList: React.FC = () => {
   return (
     <Card className="flex flex-col shadow-none border-1 p-2">
       <CardBody>
-        <Select
-          className="w-48 mb-4"
-          label={studentFilter?.class_current || `Select Class`}
-          labelPlacement=" "
-          name="class_current"
-          onChange={handleChange}
-        >
-          {classes().map((data) => (
-            <SelectItem key={data.key}>{data.label}</SelectItem>
-          ))}
-        </Select>
+        <div className="flex justify-between items-center mb-4">
+          <Select
+            className="w-48 mb-4"
+            label={`Select Class`}
+            labelPlacement="outside"
+            name="class_current"
+            onChange={handleChange}
+          >
+            {classes().map((data) => (
+              <SelectItem key={data.key}>{data.label}</SelectItem>
+            ))}
+          </Select>
+          <Button color="primary">Add new student</Button>
+        </div>
         <Table className="shadow-none border-0">
           <TableHeader columns={columns}>
             {(column) => (
@@ -142,7 +146,6 @@ const StudentsList: React.FC = () => {
                           isBordered: true,
                           src: student?.profilePhoto ? `http://localhost:3001/uploads/${student?.profilePhoto}` : `http://localhost:3001/uploads/default-avatar.png`,
                         }}
-                        className="transition-transform"
                         description={`${student?.email} / ${student.userId}`}
                         name={
                           student?.firstName
@@ -151,12 +154,6 @@ const StudentsList: React.FC = () => {
                         }
                         onClick={() => router.push(`/students/${student.userId}`)}
                       />
-                      {/* <div>
-                        <Link showAnchorIcon color="foreground" size="sm" href={`/students/${student.userId}`} className="font-semibold">
-                          {student.firstName} {student.lastName}
-                        </Link>
-                      </div>
-                      <small className="text-slate-600">{student.email}</small> */}
                     </TableCell>
                     <TableCell>{student.doa}</TableCell>
                     <TableCell>{student.phone}</TableCell>

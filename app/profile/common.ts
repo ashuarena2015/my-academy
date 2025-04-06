@@ -1,3 +1,7 @@
+import React from "react";
+// import { InputProps } from "@nextui-org/react";
+import { Input } from "@heroui/react";
+
 export const academicSessions = () => {
     return [
         { key: "2023/24", label: "2023/24" },
