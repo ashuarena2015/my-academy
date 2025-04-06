@@ -37,6 +37,7 @@ interface LoginUser {
     academic_session?: string;
     adminRole?: string;
     userId?: string;
+    designation?: string;
 }
 
 const ProfileUpdateForm = ({ loginUser }: { loginUser: LoginUser }) => {
@@ -59,6 +60,7 @@ const ProfileUpdateForm = ({ loginUser }: { loginUser: LoginUser }) => {
         class_current: string;
         academic_session: string;
         adminRole: string;
+        designation: string
     }
 
     const [userInputInfo, setUserInputInfo] = useState<UserInputInfo>({
@@ -76,7 +78,8 @@ const ProfileUpdateForm = ({ loginUser }: { loginUser: LoginUser }) => {
         admission_class: "",
         class_current: "",
         academic_session: "",
-        adminRole: ""
+        adminRole: "",
+        designation: ""
     });
 
   const [prefilledInfo, setPrefilledInfo] = useState<boolean>(false);
@@ -99,6 +102,7 @@ const ProfileUpdateForm = ({ loginUser }: { loginUser: LoginUser }) => {
         class_current: loginUser?.class_current || "",
         academic_session: loginUser?.academic_session || "",
         adminRole: loginUser?.adminRole || "",
+        designation: loginUser?.designation || "",
       });
       setChangedDob(
         loginUser?.dob
@@ -239,6 +243,9 @@ const ProfileUpdateForm = ({ loginUser }: { loginUser: LoginUser }) => {
                                 </div>
                                 <div className="flex justify-between w-full">
                                     {getInputField({ name: "email", errorMessage: "Please enter email", placeholder: "Enter your email", type: "email", label: "email", isDisabled: true })}
+                                </div>
+                                <div className="flex justify-between w-full">
+                                    {getInputField({ name: "designation", errorMessage: "Please enter designation", placeholder: "Enter your designation", type: "text", label: "Designation", classNames: "", isDisabled: false })}
                                 </div>
                                 <div className="flex justify-between w-full">
                                     {getInputField({ name: "phone", errorMessage: "Please enter phone", placeholder: "Enter your phone", type: "number", label: "Phone", isDisabled: false })}

@@ -36,7 +36,7 @@ const IDCard: React.FC<IDCardProps> = ({ details }) => {
                     </div>
                     <div className="font-bold mb-4 text-2xl text-center">
                         {fullName}
-                        {details?.adminRole ? <p className="text-sm text-slate-500">{details?.adminRole.toUpperCase()}</p> : null}
+                        {details?.designation ? <p className="text-sm text-slate-500">{details?.designation.toUpperCase()}</p> : null}
                     </div>
                     <div className="id-details">
                         {details?.userType === 'student' ? <div>

@@ -31,7 +31,7 @@ export default function RegisterPage() {
     });
 
     if ((response as any)?.isLogin) {
-      router.replace('/profile');
+      router.replace('/dashboard');
     }
   };
 

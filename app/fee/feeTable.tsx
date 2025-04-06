@@ -78,8 +78,7 @@ const FeeTableList: FC = () => {
   return (
     <div className="grid grid-cols-3 gap-4">
       <div className="col-span-3">
-        <Card>
-          <CardBody>
+        <div>
             <div className="flex gap-2 mb-4">
               {!studentId ?
                 <Select
@@ -155,8 +154,7 @@ const FeeTableList: FC = () => {
                 )}
               </TableBody>
             </Table>
-          </CardBody>
-        </Card>
+          </div>
       </div>
       {/* <div className="col-span-1">
         <FeeAmount academicSession={academicSession} setAnnualFeeInfo={setAnnualFeeInfo} academicClass={classCurrent} />

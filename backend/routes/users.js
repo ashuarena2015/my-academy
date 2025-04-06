@@ -19,17 +19,35 @@ const sharp = require("sharp");
 
 routerUsers.post("/", async (req, res) => {
     try {
-        const { class_current } = req.body;
-        if (!class_current) {
+        const { class_current, userAll, userType } = req.body;
+
+        if (!class_current && !userAll) {
             return res.status(400).json({ error: "Class is required" });
         }
-        const studentDetails = await User.find({ class_current });                  
-        console.log({studentDetails});
-        res.json(studentDetails);
+
+        let users = [];
+        let students = [];
+
+        if (userAll) {
+            // Get non-students
+            users = await User.find({ userType: userType === 'all' ? { $ne: 'student' } : userType })
+                              .populate("class_current"); // Adjust as needed
+        } else {
+            // Get both students and non-students of a specific class
+            const all = await User.find({ class_current })
+                                  .populate("class_current"); // Adjust as needed
+
+            // Separate them into users and students
+            users = all.filter(u => u.userType !== "student");
+            students = all.filter(u => u.userType === "student");
+        }
+
+        res.json({ users, students });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
+
 
 routerUsers.get("/counter", async (req, res) => {
     try {
@@ -108,7 +126,7 @@ routerUsers.post("/register", async (req, res) => {
 routerUsers.post("/update", async (req, res) => {
     try {
         const { email: userEmail, firstName, lastName, address, dob, userType, phone,
-            alternatePhone, fatherName, motherName, class_current, admission_class, doa, academic_session } = req.body.userInfo;
+            alternatePhone, fatherName, motherName, class_current, admission_class, doa, academic_session, designation } = req.body.userInfo;
         console.log('req.body.userInfo', req.body.userInfo, userEmail);
         if (!userEmail) {
             return res.status(400).json({ error: "Name and Email are required" });
@@ -134,6 +152,7 @@ routerUsers.post("/update", async (req, res) => {
                 academic_session,
                 admission_class,
                 doa,
+                designation
             },
             { new: true, upsert: true } // Create if not found
         );

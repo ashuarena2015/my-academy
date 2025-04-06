@@ -2,7 +2,7 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../api/store";
 
-export default function DashboardLayout({
+export default function UserLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -16,7 +16,7 @@ export default function DashboardLayout({
 
   return (
     <section className="flex flex-col justify-center gap-4">
-      <div className="w-full mt-10">{children}</div>
+      <div className="w-full">{children}</div>
     </section>
   );
 }

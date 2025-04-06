@@ -18,3 +18,14 @@ export const classes = () => {
         { key: "PP1-B", label: "PP1-B" }
     ]
 }
+
+export const staffs = () => {
+    return [
+        { key: "all", label: "All" },
+        { key: "admin", label: "Admin" },
+        { key: "teacher", label: "Teachers" },
+        { key: "staff", label: "Staffs" }
+    ]
+}
+
+

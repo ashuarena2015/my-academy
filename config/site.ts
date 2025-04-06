@@ -27,9 +27,9 @@ export const siteConfig = (loginUser: any) => {
         isShow: loginUser?.userType !== 'student'
       },
       {
-        label: "Staffs",
-        href: "/staffs",
-        icon: "Staffs",
+        label: "Users",
+        href: "/users",
+        icon: "Users",
         iconColor: "bg-default-200",
         isShow: loginUser?.userType !== 'student'
       },

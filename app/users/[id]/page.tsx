@@ -95,7 +95,7 @@ const UserDetails: FC = () => {
                         <div className="flex flex-col justify-center">
                             <p className="text-2xl">{currentUser?.firstName} {currentUser?.lastName}</p>
                             <p className="text-small text-default-500">{currentUser?.email}</p>
-                            <p className="text-small text-default-500">{currentUser?.class_current}</p>
+                            <p className="text-small text-default-500">{currentUser?.userType}</p>
                         </div>
                     </div>
                 )}
@@ -112,20 +112,6 @@ const UserDetails: FC = () => {
                 <Divider />
                 <div className="py-5">
                     <div className="flex justify-between gap-4">
-                        <div className="flex gap-4">
-                            <div>
-                                <Avatar
-                                    showFallback
-                                    fallback={getIcon('parent')}
-                                    color="secondary"
-                                    size="lg"
-                                />
-                            </div>
-                            <div className="text-sm">
-                                <p className="text-default-500">Parents</p>
-                                <p>{currentUser?.fatherName}, {currentUser?.motherName}</p>
-                            </div>
-                        </div>
                         <div className="flex gap-4">
                             <div>
                                 <Avatar

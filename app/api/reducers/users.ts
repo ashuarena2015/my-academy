@@ -16,9 +16,9 @@ interface UsersState {
   userAttributes: any[];
   expensesCount?: number;
   totalExpenses?: number;
-  students: any[];
   currentUser: User | null;
-  userCounter: {}
+  userCounter: {},
+  students: User[]
 }
 
 // Initial state with TypeScript
@@ -53,6 +53,10 @@ const usersSlice = createSlice({
     getAllUsers: (state, action: PayloadAction<{ users: User[] }>) => {
       state.users = action.payload.users;
     },
+    getAllStudents: (state, action: PayloadAction<{ students: User[] }>) => {
+      console.log('action.payload', action.payload);
+      state.students = action.payload.students;
+    },
     getUserDetail: (state, action: PayloadAction<{ user: User }>) => {
       state.currentUser = action.payload;
     },
@@ -69,6 +73,6 @@ const usersSlice = createSlice({
 });
 
 // Export actions & reducer
-export const { getUsers, isLoading, getLoginDetails, logoutUser, getUserDetail, uploadProfilePhoto } =
+export const { getUsers, isLoading, getLoginDetails, logoutUser, getUserDetail, uploadProfilePhoto, getAllStudents } =
   usersSlice.actions;
 export default usersSlice.reducer;

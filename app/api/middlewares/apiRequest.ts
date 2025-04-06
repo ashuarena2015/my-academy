@@ -101,11 +101,19 @@ const api =
         return true;
       }
       if(dispatchType === "getAllUsers") {
-        console.log({response});
         dispatch({
           type: "users/getAllUsers",
           payload: {
-            users: response?.data
+            users: response?.data?.users
+          },
+        });
+        return true;
+      }
+      if(dispatchType === "getAllStudents") {
+        dispatch({
+          type: "users/getAllStudents",
+          payload: {
+            students: response?.data.students
           },
         });
         return true;

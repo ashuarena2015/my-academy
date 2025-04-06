@@ -108,7 +108,7 @@ const SideBar: FC = () => {
           </svg>
         );
         break;
-      case "Staffs":
+      case "Users":
         icon = (
           <svg
             aria-hidden="true"

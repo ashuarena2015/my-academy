@@ -24,9 +24,6 @@ import { useRouter } from "next/navigation";
 
 export const columns = [
   { name: "Name", uid: "name" },
-  { name: "Admission date", uid: "doa" },
-  { name: "Phone", uid: "phone" },
-  { name: "Address", uid: "address" },
   { name: "Status", uid: "status" },
 ];
 
@@ -49,8 +46,8 @@ const StudentsList: React.FC = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const users: UserType[] = useSelector((state: RootState) =>
-    state.users.users.map((user) => ({
+  const students: UserType[] = useSelector((state: RootState) =>
+    state.users.students.map((user) => ({
       id: Number(user.id) || 0,
       userId: user.userId || user.id, // Map userId or fallback to id
       name: `${user.firstName} ${user.lastName}`,
@@ -87,9 +84,9 @@ const StudentsList: React.FC = () => {
         payload: {
           url: `user`,
           method: "POST",
-          onSuccess: "users/getAllUsers",
+          onSuccess: "users/getAllStudents",
           onError: "GLOBAL_MESSAGE",
-          dispatchType: "getAllUsers",
+          dispatchType: "getAllStudents",
           body: {
             class_current: studentFilter.class_current,
           }
@@ -103,13 +100,12 @@ const StudentsList: React.FC = () => {
     </Chip>
   }
   return (
-    <Card className="flex flex-col shadow-none border-1 p-2">
-      <CardBody>
-        <div className="flex justify-between items-center mb-4">
+    <div>
+        <div className="flex justify-between items-center mb-2">
           <Select
-            className="w-48 mb-4"
-            label={`Select Class`}
-            labelPlacement="outside"
+            className="w-48 mb-1"
+            label={studentFilter?.class_current || "Select class"}
+            labelPlacement=" "
             name="class_current"
             onChange={handleChange}
           >
@@ -119,7 +115,7 @@ const StudentsList: React.FC = () => {
           </Select>
           <Button color="primary">Add new student</Button>
         </div>
-        <Table className="shadow-none border-0">
+        <Table isHeaderSticky className="shadow-none border-0" removeWrapper>
           <TableHeader columns={columns}>
             {(column) => (
               <TableColumn
@@ -131,12 +127,12 @@ const StudentsList: React.FC = () => {
             )}
           </TableHeader>
           <TableBody>
-            {!users?.length ? 
+            {!students?.length ? 
               <TableRow>
-                <TableCell colSpan={5}>No records found!</TableCell>
+                <TableCell colSpan={2}>No records found!</TableCell>
               </TableRow>
               : 
-              users?.map((student: UserType, i) => {
+              students?.map((student: UserType, i) => {
                 return (
                   <TableRow key={i}>
                     <TableCell>
@@ -146,7 +142,12 @@ const StudentsList: React.FC = () => {
                           isBordered: true,
                           src: student?.profilePhoto ? `http://localhost:3001/uploads/${student?.profilePhoto}` : `http://localhost:3001/uploads/default-avatar.png`,
                         }}
-                        description={`${student?.email} / ${student.userId}`}
+                        className="text-left"
+                        description={<>
+                          <p>{student?.email} / {student.userId}</p>
+                          <p>{student?.phone}</p>
+                          </>
+                        }
                         name={
                           student?.firstName
                             ? `${student?.firstName} ${student?.lastName}`
@@ -155,9 +156,9 @@ const StudentsList: React.FC = () => {
                         onClick={() => router.push(`/students/${student.userId}`)}
                       />
                     </TableCell>
-                    <TableCell>{student.doa}</TableCell>
+                    {/* <TableCell>{student.doa}</TableCell>
                     <TableCell>{student.phone}</TableCell>
-                    <TableCell><address>{student.address}</address></TableCell>
+                    <TableCell><address>{student.address}</address></TableCell> */}
                     <TableCell>{getStatus(student.status)}</TableCell>
                   </TableRow>
                 )  
@@ -165,8 +166,7 @@ const StudentsList: React.FC = () => {
             }
           </TableBody>
         </Table>
-      </CardBody>
-    </Card>
+      </div>
   );
 };
 

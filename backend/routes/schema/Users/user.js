@@ -25,6 +25,7 @@ const UserSchema = new mongoose.Schema(
     academic_session: { type: String },
     adminPermissions: { type: Array, default: [] },
     profilePhoto: { type: String },
+    designation: { type: String },
   },
   { timestamps: true, discriminatorKey: "kind" },
 );
