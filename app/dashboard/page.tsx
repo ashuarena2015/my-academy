@@ -16,25 +16,23 @@ const DashboardPage = () => {
   return (
     <div>
       <MemoizedUsersCount />
-      <div className="mt-5 grid grid-cols-3 gap-4">
-        <div className="col-span-1 bg-white p-5 rounded-lg shadow-lg overflow-auto pb-5">
+      <div className="mt-5 grid grid-cols-4 gap-4">
+        <div className="col-span-2 bg-white p-5 rounded-lg shadow-lg overflow-auto pb-5">
           <p className="text-2xl mb-2">Students</p>
           <div className="h-96 overflow-auto">
-            <MemoizedStudentsList />
+            <MemoizedStudentsList noTableWrapper />
           </div>
         </div>
-        <div className="col-span-1 bg-white p-5 rounded-lg shadow-lg overflow-auto">
+        <div className="col-span-2 bg-white p-5 rounded-lg shadow-lg overflow-auto">
           <p className="text-2xl mb-2">Administration</p>
           <div className="h-96 overflow-auto">
-            <MemoizedUsersList userTypeProp={'staffs'} />
+            <MemoizedUsersList userTypeProp={'staffs'} noTableWrapper />
           </div>
         </div>
-        <div className="col-span-1 bg-white p-5 rounded-lg shadow-lg overflow-auto">
-          <p className="text-2xl mb-2">Fee</p>
-          <div className="h-96 overflow-auto">
-            <MemoizedFeeTable />
-          </div>
-        </div>
+      </div>
+      <div className="bg-white p-5 rounded-lg shadow-lg mt-4">
+        <p className="text-2xl mb-2">Fee</p>
+        <MemoizedFeeTable noTableWrapper />
       </div>
     </div>
   );

@@ -11,7 +11,8 @@ import {
     Card,
     CardBody,
     Input,
-    Button
+    Button,
+    Link
 } from "@heroui/react";
 import FeeTableList from "../../fee/feeTable";
 import IDCard from "../../profile/IdCard";
@@ -80,35 +81,40 @@ const UserDetails: FC = () => {
                     </div>
                 )
                 : (
-                    <div className="flex gap-3 mb-5 align-center">
-                        <div className="text-center">
-                            <Image
-                                alt="heroui logo"
-                                height={80}
-                                radius="sm"
-                                src={profilePhoto}
-                                width={80}
-                                className="rounded-full border-default-200 mb-1"
-                            />                        
-                            {loginUserType !== 'student' ? <ImageUploader userId={currentUser?.userId} /> : null}
+                    <div className="flex gap-3 mb-5 align-center justify-between">
+                        <div className="flex gap-4">
+                            <div className="text-center">
+                                <Image
+                                    alt="heroui logo"
+                                    height={80}
+                                    radius="sm"
+                                    src={profilePhoto}
+                                    width={80}
+                                    className="rounded-full border-default-200 mb-1"
+                                />                        
+                                {loginUserType !== 'student' ? <ImageUploader btnTitle="" userId={currentUser?.userId} /> : null}
+                            </div>
+                            <div className="flex flex-col">
+                                <p className="text-2xl">{currentUser?.firstName} {currentUser?.lastName}</p>
+                                <p className="text-small text-default-500">{currentUser?.email}</p>
+                                <p className="text-small text-default-500">{currentUser?.class_current}</p>
+                            </div>
                         </div>
-                        <div className="flex flex-col justify-center">
-                            <p className="text-2xl">{currentUser?.firstName} {currentUser?.lastName}</p>
-                            <p className="text-small text-default-500">{currentUser?.email}</p>
-                            <p className="text-small text-default-500">{currentUser?.class_current}</p>
+                        <div>
+                            {loginUserType !== 'student' ?
+                                <Link
+                                    color="primary"
+                                    as="button"
+                                    underline="always"
+                                    className="mb-4"
+                                    onPress={() => router.push(`/profile/${currentUser.userId}`)}
+                                >
+                                    Profile update
+                                </Link>
+                            : null}
                         </div>
                     </div>
                 )}
-                {loginUserType !== 'student' ?
-                    <Button
-                        color="primary"
-                        size="sm"
-                        className="mb-4"
-                        onClick={() => router.push(`/profile/${currentUser.userId}`)}
-                    >
-                        Profile update
-                    </Button>
-                : null}
                 <Divider />
                 <div className="py-5">
                     <div className="flex justify-between gap-4">

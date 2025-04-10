@@ -244,9 +244,9 @@ const ProfileUpdateForm = ({ loginUser }: { loginUser: LoginUser }) => {
                                 <div className="flex justify-between w-full">
                                     {getInputField({ name: "email", errorMessage: "Please enter email", placeholder: "Enter your email", type: "email", label: "email", isDisabled: true })}
                                 </div>
-                                <div className="flex justify-between w-full">
+                                {userInputInfo?.userType !== "student" && <div className="flex justify-between w-full">
                                     {getInputField({ name: "designation", errorMessage: "Please enter designation", placeholder: "Enter your designation", type: "text", label: "Designation", classNames: "", isDisabled: false })}
-                                </div>
+                                </div>}
                                 <div className="flex justify-between w-full">
                                     {getInputField({ name: "phone", errorMessage: "Please enter phone", placeholder: "Enter your phone", type: "number", label: "Phone", isDisabled: false })}
                                     {getInputField({ name: "alternatePhone", errorMessage: "Please enter Alternate Phone", placeholder: "Enter your alternate Phone", type: "number", label: "Alternate Phone", classNames: "ml-2", isDisabled: false })}
@@ -256,7 +256,6 @@ const ProfileUpdateForm = ({ loginUser }: { loginUser: LoginUser }) => {
                                 </div>
                                 <div className="flex justify-between">
                                     {getDatePicker({ name: "dob", label: "Birth date", placeholder: "Select your birth date", classNames: "text-left w-1/2", defaultValue: changedDob ? format(changedDob, "yyyy-MM-dd") : "" })}
-                                    <ImageUploader userId={loginUser?.userId || ""} />
                                 </div>
                                 {userInputInfo?.userType === 'student' ?
                                     <>
@@ -299,8 +298,9 @@ const ProfileUpdateForm = ({ loginUser }: { loginUser: LoginUser }) => {
                     </div>
                 </Form>
             </div>
-            <div className="col-span-1">
+            <div className="col-span-1 ml-4">
                 <IDCard details={loginUser || []} />
+                <ImageUploader userId={loginUser?.userId || ""} btnTitle="change profile image" />
             </div>
         </>
     )

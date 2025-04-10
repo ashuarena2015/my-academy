@@ -34,8 +34,8 @@ export const siteConfig = (loginUser: any) => {
         isShow: loginUser?.userType !== 'student'
       },
       {
-        label: "News",
-        href: "/news",
+        label: "Blogs",
+        href: "/blogs",
         icon: "News",
         iconColor: "bg-secondary-100",
         isShow: true

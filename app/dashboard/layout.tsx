@@ -15,8 +15,8 @@ export default function DashboardLayout({
   }
 
   return (
-    <section className="flex flex-col justify-center gap-4">
-      <div className="w-full mt-10">{children}</div>
+    <section>
+      {children}
     </section>
   );
 }

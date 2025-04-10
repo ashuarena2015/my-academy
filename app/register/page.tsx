@@ -2,6 +2,7 @@
 
 import React, {
   useState,
+  useEffect,
 } from "react";
 import {
   Form,
@@ -30,8 +31,6 @@ export default function RegisterPage() {
   const handleSelectChange  = (e: any) => {
     setIsAdmin(e.target.value !== "student");
   }
-
-  console.log({isAdmin});
 
   const handleSubmit = (e: any) => {
     e.preventDefault();

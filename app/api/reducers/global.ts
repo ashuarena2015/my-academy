@@ -4,16 +4,21 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface Global {
   message: string;
   type: string;
+  branches: [{
+    branch: string;
+  }]
 }
 
 interface GlobalState {
   message: string;
   type?: string;
+  branches: Array<Global>;
 }
 
 const initialState: GlobalState = {
   message: "",
   type: "",
+  branches: []
 };
 
 // Create slice with TypeScript
@@ -28,9 +33,12 @@ const globalSlice = createSlice({
       state.message = action.payload.message;
       state.type = action.payload.type;
     },
+    getSchoolBranches: (state, action) => {
+      state.branches = action.payload
+    }
   },
 });
 
 // Export actions & reducer
-export const { globalMessage } = globalSlice.actions;
+export const { globalMessage, getSchoolBranches } = globalSlice.actions;
 export default globalSlice.reducer;

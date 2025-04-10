@@ -15,6 +15,7 @@ const __dirname = dirname(__filename);
 
 const { routerUsers } = require('./routes/users');
 const { routerFee } = require('./routes/fee');
+const { routerSchool } = require('./routes/school');
 
 const MONGO_URI_LOCAL = "mongodb://127.0.0.1:27017/my-academy";
 
@@ -98,6 +99,7 @@ app.use(cookieParser());
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+app.use("/api/school", routerSchool);
 app.use("/api/user", routerUsers);
 app.use("/api/fee", routerFee);
 

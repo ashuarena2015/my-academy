@@ -49,9 +49,10 @@ function centerAspectCrop(
 
 interface ImageUploaderProps {
   userId: string;
+  btnTitle: string;
 }
 
-const ImageUploader: FC<ImageUploaderProps> = ({ userId }) => {
+const ImageUploader: FC<ImageUploaderProps> = ({ userId, btnTitle }) => {
   
   const [imgSrc, setImgSrc] = useState('')
   const previewCanvasRef = useRef<HTMLCanvasElement>(null)
@@ -205,16 +206,16 @@ const ImageUploader: FC<ImageUploaderProps> = ({ userId }) => {
             onPress={onOpen}
             size='sm'
         >
-            Edit
+            {btnTitle || 'Edit'}
         </Button>
         <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
             <ModalContent>
                 {(onClose) => (
                     <>
-                    <ModalHeader className="flex flex-col gap-1">Profile picture</ModalHeader>
+                    <ModalHeader className="flex flex-col gap-4">Profile picture</ModalHeader>
                         <ModalBody>
                         <div className="Crop-Controls">
-                            <Input type="file" accept="image/*" onChange={onSelectFile} />
+                            <input className="mb-4" type="file" accept="image/*" onChange={onSelectFile} />
                             {/* <div>
                             <label htmlFor="scale-input">Scale: </label>
                             <input
@@ -278,7 +279,7 @@ const ImageUploader: FC<ImageUploaderProps> = ({ userId }) => {
                                 />
                             </div>
                             <div>
-                                <Button color='primary' onClick={onDownloadCropClick}>Upload</Button>
+                                <Button className='mb-4' color='primary' onClick={onDownloadCropClick}>Upload</Button>
                                 <a
                                   href="#hidden"
                                   ref={hiddenAnchorRef}

@@ -32,7 +32,7 @@ const api =
     try {
       isLoading(true);
 
-      const { url, method, params, dispatchType, body } =
+      const { url, method, params, dispatchType, body, onSuccess } =
         action.payload as ApiRequestPayload;
 
       const response = await axiosInstance(url, {
@@ -41,6 +41,15 @@ const api =
         data: body,
       });
 
+      if(dispatchType === 'getSchoolBranches') {
+        dispatch({
+          type: "global/getSchoolBranches",
+          payload: response.data
+        });
+      }
+      if(dispatchType === 'addNewUserModal') {
+        return { isUserAdd: response?.data?.user };
+      }
       if (dispatchType === "saveUserDetails") {
         dispatch({
           type: "global/globalMessage",
@@ -55,7 +64,7 @@ const api =
             user: response?.data?.user,
           },
         });
-        return;
+        
       }
       if (dispatchType === "userLogin") {
         dispatch({
@@ -80,7 +89,7 @@ const api =
             user: response?.data?.user,
           },
         });
-        return { isAuth: true };
+        return { isAuth: true, isUser: response?.data?.user };
       }
       if (dispatchType === "userLogout") {
         dispatch({

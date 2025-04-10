@@ -54,14 +54,12 @@ const usersSlice = createSlice({
       state.users = action.payload.users;
     },
     getAllStudents: (state, action: PayloadAction<{ students: User[] }>) => {
-      console.log('action.payload', action.payload);
       state.students = action.payload.students;
     },
     getUserDetail: (state, action: PayloadAction<{ user: User }>) => {
       state.currentUser = action.payload;
     },
     uploadProfilePhoto: (state, action: PayloadAction<{ userId: string; photoUrl: string }>) => {
-      console.log('action.payload', action.payload);
       if (state.currentUser) {
         state.currentUser.profilePhoto = action.payload.photoUrl;
       }

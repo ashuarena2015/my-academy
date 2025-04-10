@@ -21,6 +21,7 @@ import { RootState } from "../api/store";
 
 import { staffs } from '../profile/common';
 import { useRouter } from "next/navigation";
+import AddNewUser from "../components/AddNewUserModal";
 
 export const columns = [
   { name: "Name", uid: "name" },
@@ -45,9 +46,10 @@ export interface UserType {
 
 interface UsersListProps {
   userTypeProp: string; // Define the expected type for userTypeProp
+  noTableWrapper: boolean
 }
 
-const UsersList: React.FC<UsersListProps> = ({ userTypeProp }) => {
+const UsersList: React.FC<UsersListProps> = ({ userTypeProp, noTableWrapper }) => {
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -122,9 +124,9 @@ const UsersList: React.FC<UsersListProps> = ({ userTypeProp }) => {
             <SelectItem key={data.key}>{data.label}</SelectItem>
           ))}
         </Select>
-        <Button color="primary">Add new staff</Button>
+        <AddNewUser title={'Add new staff'} userTypeForm="" />
       </div>
-      <Table isHeaderSticky className="shadow-none border-0" removeWrapper>
+      <Table isHeaderSticky className="shadow-none border-0" removeWrapper={noTableWrapper}>
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn

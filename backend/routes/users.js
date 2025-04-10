@@ -97,7 +97,7 @@ const generateUserId = async (userType) => {
 
 routerUsers.post("/register", async (req, res) => {
     try {
-        const { password, email, userType, adminPermissions } = req.body.userInfo;
+        const { password, email, userType, ...props } = req.body.userInfo;
         if (!password || !email) {
             return res.status(400).json({ error: "Name and Email are required" });
         }
@@ -114,7 +114,7 @@ routerUsers.post("/register", async (req, res) => {
             email,
             userId,
             userType,
-            adminPermissions
+            ...props
         });
         await newUser.save();
         res.status(201).json({ message: "User saved!", user: newUser });
@@ -125,9 +125,7 @@ routerUsers.post("/register", async (req, res) => {
 
 routerUsers.post("/update", async (req, res) => {
     try {
-        const { email: userEmail, firstName, lastName, address, dob, userType, phone,
-            alternatePhone, fatherName, motherName, class_current, admission_class, doa, academic_session, designation } = req.body.userInfo;
-        console.log('req.body.userInfo', req.body.userInfo, userEmail);
+        const { email: userEmail, ...props } = req.body.userInfo;
         if (!userEmail) {
             return res.status(400).json({ error: "Name and Email are required" });
         }
@@ -139,24 +137,10 @@ routerUsers.post("/update", async (req, res) => {
                 email: userEmail
             },
             {
-                firstName,
-                lastName,
-                address,
-                dob,
-                userType,
-                phone,
-                alternatePhone,
-                fatherName,
-                motherName,
-                class_current,
-                academic_session,
-                admission_class,
-                doa,
-                designation
+                ...props
             },
             { new: true, upsert: true } // Create if not found
         );
-        console.log({newUser});
         res.status(201).json({ message: "User saved!", user: newUser });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -166,11 +150,8 @@ routerUsers.post("/update", async (req, res) => {
 routerUsers.post('/login', async (req, res) => {
 
     try {
-        // const db = await dbConnect();
-        // const userCollection = db.collection('users');
     
         const { email, password } = req.body.userInfo;;
-        console.log('req.query.body', req.body.userInfo);
 
 
         if(!email || !password) {
@@ -179,7 +160,6 @@ routerUsers.post('/login', async (req, res) => {
 
         // Check If User Exists In The Database
         const user = await User.findOne({ email });
-        console.log({user});
         // Compare Passwords
         const passwordMatch = await bcrypt.compare(password, user.password);
 

@@ -6,17 +6,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../api/store";
 import { useParams } from "next/navigation";
 import { academicSessions, classes } from "../profile/common";
+import { Interface } from "readline";
 // import FeeAmount from "./feeAmount"
 
-const FeeTableList: FC = () => {
+interface FeeTableListProps {
+  noTableWrapper: boolean;
+}
+
+const FeeTableList: FC<FeeTableListProps> = ({ noTableWrapper }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const params = useParams();
   const { id } = params;
 
   const { detailsType, feeDetailsInfo  } = useSelector((state: RootState) => state.fee.feeAllDetails);
-
-  console.log({feeDetailsInfo: feeDetailsInfo[0]});
 
   const [academicSession, setAcademicSession] = useState<string>(academicSessions()[0]?.key || "");
   const [classCurrent, setClassCurrent] = useState<string>(classes()[0]?.key || "");
@@ -103,7 +106,7 @@ const FeeTableList: FC = () => {
                 ))}
               </Select>
             </div>
-            <Table aria-label="Example static collection table" removeWrapper={true}>
+            <Table aria-label="Example static collection table" removeWrapper={noTableWrapper}>
               <TableHeader>
                 {detailsType === 'group' ? (
                   <>

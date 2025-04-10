@@ -9,18 +9,15 @@ import {
   TableCell,
   User,
   Chip,
-  Tooltip,
   Select,
   SelectItem,
-  Card,
-  CardBody,
-  Link,
-  Button
+  useDisclosure,
 } from "@heroui/react";
 import { RootState } from "../api/store";
 
 import { classes } from '../profile/common';
 import { useRouter } from "next/navigation";
+import AddNewUser from "../components/AddNewUserModal";
 
 export const columns = [
   { name: "Name", uid: "name" },
@@ -41,7 +38,11 @@ export interface UserType {
   profilePhoto: string;
 }
 
-const StudentsList: React.FC = () => {
+interface StudentsListProps {
+  noTableWrapper?: boolean;
+}
+
+const StudentsList: React.FC<StudentsListProps> = ({ noTableWrapper }) => {
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -113,9 +114,9 @@ const StudentsList: React.FC = () => {
               <SelectItem key={data.key}>{data.label}</SelectItem>
             ))}
           </Select>
-          <Button color="primary">Add new student</Button>
+          <AddNewUser title={'Add new student'} userTypeForm="student" />
         </div>
-        <Table isHeaderSticky className="shadow-none border-0" removeWrapper>
+        <Table isHeaderSticky className="shadow-none border-0" removeWrapper={noTableWrapper}>
           <TableHeader columns={columns}>
             {(column) => (
               <TableColumn

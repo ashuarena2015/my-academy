@@ -15,8 +15,8 @@ export default function StudentsLayout({
   }
 
   return (
-    <section className="flex flex-col justify-center gap-4">
-      <div className="w-full">{children}</div>
+    <section>
+      {children}
     </section>
   );
 }
