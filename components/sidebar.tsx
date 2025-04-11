@@ -148,7 +148,7 @@ const SideBar: FC = () => {
           </svg>
         );
         break;
-      case "Calendar":
+      case "Events":
         icon = (
           <svg
             aria-hidden="true"

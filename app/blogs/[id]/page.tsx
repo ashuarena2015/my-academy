@@ -14,9 +14,9 @@ const BlogPage: FC = () => {
 
   const router = useRouter();
   const [postInfo, setPostInfo] = useState<{ title?: string; content?: string; }>({});
-  const [currentCatName, setCurrentCatName] = useState();
+  const [currentCatName, setCurrentCatName] = useState<string | undefined>();
 
-  const [otherPosts, setOtherPosts] = useState([]);
+  const [otherPosts, setOtherPosts] = useState<{ id: string; postId: string; slug: string; title: string; date: string; excerpt: string; }[]>([]);
 
   const { id } = useParams();
   const getBlog = async () => {
@@ -36,13 +36,13 @@ const BlogPage: FC = () => {
         }
       }`;
 
-    const data = await request('http://localhost/my-academy-news-blogs/graphql', query) as { post: object; };
+    const data = await request('http://localhost/my-academy-news-blogs/graphql', query) as { post: { title: string; content: string; categories: { nodes: [ { slug: string; }]}}; };
     setCurrentCatName(data.post.categories.nodes[0].slug)
-    setPostInfo(data.post);
+    setPostInfo({ title: data.post.title, content: data.post.content });
   
   }
 
-  const getOtherPostsFromCategory = async (catName) => {
+  const getOtherPostsFromCategory = async (catName: string) => {
     const query = gql`
       {
         posts(where: { categoryName: "${catName}" }) {
@@ -58,7 +58,7 @@ const BlogPage: FC = () => {
       }
     `;
   
-    const data = await request('http://localhost/my-academy-news-blogs/graphql', query);
+    const data = await request<{ posts: { nodes: { id: string; postId: string; slug: string; title: string; date: string; excerpt: string; }[] } }>('http://localhost/my-academy-news-blogs/graphql', query);
     setOtherPosts(data.posts.nodes);
   }
 
@@ -76,7 +76,7 @@ const BlogPage: FC = () => {
     <div className="grid grid-cols-3">
       <div className="col-span-2">
         <h1 className="text-2xl mb-4 font-semibold">{postInfo?.title}</h1>
-        <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(postInfo?.content || "") }} />
+        <div className="blog-content" dangerouslySetInnerHTML={{ __html: DOMPurify?.sanitize(postInfo?.content || "") }} />
       </div>
       {otherPosts?.length > 1 ? <div className="col-span-1 ml-4">
         <h1 className="text-2xl mb-4">Also see</h1>

@@ -41,9 +41,9 @@ export const siteConfig = (loginUser: any) => {
         isShow: true
       },
       {
-        label: "Calendar",
-        href: "/calendar",
-        icon: "Calendar",
+        label: "Events",
+        href: "/events",
+        icon: "Events",
         iconColor: "bg-default-200",
         isShow: true
       },

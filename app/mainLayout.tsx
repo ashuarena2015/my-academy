@@ -25,7 +25,7 @@ const MainLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
     const isUserExist = Object.keys(loginUser)?.length;
     return (
         <div className="flex w-full justify-start">
-            {isUserExist ? <div className="w-9" style={{ width: "350px" }}>
+            {isUserExist ? <div className="w-9 h-screen sticky top-0" style={{ width: "350px" }}>
                 <SideBar />
             </div> : null }
             <div className="w-full relative bg-zinc-50 min-h-screen">

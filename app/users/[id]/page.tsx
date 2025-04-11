@@ -143,9 +143,9 @@ const UserDetails: FC = () => {
                     </div>
                 </div>
                 <Divider />
-                {loginUserType !== 'student' ?
+                {loginUserType === 'student' ?
                 <div className="mt-4">
-                    <FeeTableList />
+                    <FeeTableList noTableWrapper={false} />
                 </div> : null }
             </div>
             <div className="col-span-2">

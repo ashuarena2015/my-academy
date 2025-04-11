@@ -77,7 +77,7 @@ const UsersList: React.FC<UsersListProps> = ({ userTypeProp, noTableWrapper }) =
   }
   
   const [userFilter, setUserFilter] = useState<UserFilter>({
-    userType: "All"
+    userType: "all"
   });
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target;

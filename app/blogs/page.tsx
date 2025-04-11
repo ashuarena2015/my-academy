@@ -17,10 +17,10 @@ import { format } from 'date-fns';
 const BlogPage: FC = () => {
 
   const [currentCatName, setCurrentCatName] = useState('');
-  const [allPosts, setAllPosts] = useState<{ id: string; title: string; date: string; slug: string }[]>([]);
+  const [allPosts, setAllPosts] = useState<{ id: string; title: string; date: string; slug: string; excerpt: string }[]>([]);
   const [allCategories, setAllCategories] = useState<{ id: string; name: string; count: number; slug: string }[]>([]);
 
-  const getAllBlogs = async (catName) => {
+  const getAllBlogs = async (catName: string) => {
     let query = "";
     if(catName) {
       query = gql` 
@@ -59,7 +59,7 @@ const BlogPage: FC = () => {
         }`;
     }
 
-    const data = await request('http://localhost/my-academy-news-blogs/graphql', query) as { posts: { nodes: { id: string; title: string; date: string; slug: string }[] }};
+    const data = await request('http://localhost/my-academy-news-blogs/graphql', query) as { posts: { nodes: { id: string; title: string; date: string; slug: string, excerpt: string; }[] }};
 
     setAllPosts(data.posts.nodes);
   }
@@ -114,7 +114,7 @@ const BlogPage: FC = () => {
       </div>
       <div className="col-span-1 ml-4">
         <div className="w-full bg-white shadow-lg max-w-[260px] border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100">
-          <Listbox aria-label="Dynamic Actions" items={allCategories || []} onAction={(slug) => setCurrentCatName(slug)}>
+          <Listbox aria-label="Dynamic Actions" items={allCategories || []} onAction={(slug) => setCurrentCatName(String(slug))}>
             {(item) => (
               <ListboxItem
                 key={item.slug}
