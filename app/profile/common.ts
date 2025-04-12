@@ -19,6 +19,13 @@ export const classes = () => {
     ]
 }
 
+export const gender = () => {
+    return [
+        { key: "Male", label: "Male" },
+        { key: "Female", label: "Female" },
+    ]
+}
+
 export const staffs = () => {
     return [
         { key: "all", label: "All" },

@@ -16,6 +16,9 @@ export default function ProfileLayout({
 
   return (
     <section>
+      <div>
+        <h2 className="text-2xl pb-4">Fee collection</h2>
+      </div>
       {children}
     </section>
   );

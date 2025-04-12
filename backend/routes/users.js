@@ -8,6 +8,8 @@ const routerUsers = express.Router();
 const jwt = require('jsonwebtoken');
 const { verifyToken } = require('./isAuth');
 const { User, UserRegister } = require('./schema/Users/user');
+const { AdminPermission, AdminRoles } = require('./schema/Users/permission');
+const { SchoolBranch, SchoolClasses, SchoolSubjects } = require('./schema/School/school');
 
 const fs = require('fs');
 const path = require("path");
@@ -48,30 +50,6 @@ routerUsers.post("/", async (req, res) => {
     }
 });
 
-
-routerUsers.get("/counter", async (req, res) => {
-    try {
-        const result = await User.aggregate([
-            {
-              $group: {
-                _id: "$userType",
-                count: { $sum: 1 }
-              }
-            }
-        ]);
-        const formatted = {};
-
-        result.forEach(({ _id, count }) => {
-        // Pluralize if needed
-        const key = _id.endsWith('s') ? _id : _id + 's';
-        formatted[key] = count;
-        });
-
-        res.json(formatted);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
 
 routerUsers.get('/auth', verifyToken, async (req, res) => {
     try {
@@ -229,7 +207,59 @@ routerUsers.post("/upload-photo", upload.single("photo"), async (req, res) => {
       console.error("Upload error:", error);
       res.status(500).json({ error: "Upload failed" });
     }
-  });
+});
+
+routerUsers.get("/permissions", async (req, res) => {
+    try {
+        const permissions = await AdminPermission.find({});
+        return res
+            .status(200)
+            .json({ permissions });
+    } catch (error) {
+        return res
+            .status(403)
+            .json({error: error?.errmsg});
+    }
+})
+
+routerUsers.get("/adminInfo", async (req, res) => {
+    try {
+
+        const branches = await SchoolBranch.find({});
+        const subjects = await SchoolSubjects.find({});
+        const classes = await SchoolClasses.find({});
+        const adminRoles = await AdminRoles.find({});
+        const permissions = await AdminPermission.find({});
+        const userCounter = await User.aggregate([
+            {
+              $group: {
+                _id: "$userType",
+                count: { $sum: 1 }
+              }
+            }
+        ]);
+        const counter = {};
+
+        userCounter.forEach(({ _id, count }) => {
+            // Pluralize if needed
+            const key = _id.endsWith('s') ? _id : _id + 's';
+            counter[key] = count;
+        });
+
+        Promise.all([permissions, userCounter, branches, adminRoles, classes, subjects ]).then(() => {
+            res.json({
+                permissions: permissions[0]?.permissions,
+                counter,
+                branches,
+                adminRoles: adminRoles[0].roles,
+                classes: classes[0].classes,
+                subjects: subjects[0]?.subjects
+            });
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 routerUsers.get("/:id", async (req, res) => {
     try {

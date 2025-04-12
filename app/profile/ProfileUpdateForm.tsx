@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import {
   Form,
   Input,
@@ -9,114 +9,68 @@ import {
   Select,
   SelectItem,
   Link,
+  CheckboxGroup,
+  Checkbox
 } from "@heroui/react";
 import { format, parse } from "date-fns";
 import { parseDate } from "@internationalized/date";
 import { useDispatch, useSelector } from "react-redux";
 
 import { RootState, AppDispatch } from "../api/store";
-import { academicSessions, classes } from './common';
+import { academicSessions, gender } from './common';
 
 import ImageUploader from '../components/imageUploader/imageUploader';
 import IDCard from "./IdCard";
 
-interface LoginUser {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    address?: string;
-    dob?: string;
-    userType?: string;
-    phone?: number;
-    alternatePhone?: number;
-    fatherName?: string;
-    motherName?: string;
-    doa?: string;
-    admission_class?: string;
-    class_current?: string;
-    academic_session?: string;
-    adminRole?: string;
-    userId?: string;
-    designation?: string;
-}
+import { useDynamicInputs } from "../components/useDynamicsInput";
 
-const ProfileUpdateForm = ({ loginUser }: { loginUser: LoginUser }) => {
+const ProfileUpdateForm: FC = () => {
+
+    const { roleTypes, currentUser, permissionOptions, classes, subjects  } = useSelector((state: RootState) => state.users);
 
     const dispatch = useDispatch<AppDispatch>();
 
-    interface UserInputInfo {
-        firstName: string;
-        lastName: string;
-        email: string;
-        dob: string;
-        address?: string; // Added the address property
-        userType: string;
-        phone: number;
-        alternatePhone: number;
-        fatherName?: string; // Added the fatherName property
-        motherName?: string; // Added the motherName property,
-        doa: string;
-        admission_class: string;
-        class_current: string;
-        academic_session: string;
-        adminRole: string;
-        designation: string
-    }
+    const {
+      inputs,
+      handleChange: handleChangeDynamic,
+      addInput,
+      removeInput
+    } = useDynamicInputs();
 
-    const [userInputInfo, setUserInputInfo] = useState<UserInputInfo>({
-        firstName: "",
-        lastName: "",
-        email: "",
-        address: "",
-        dob: "",
-        userType: "",
-        phone: 0,
-        alternatePhone: 0,
-        fatherName: "",
-        motherName: "",
-        doa: "",
-        admission_class: "",
-        class_current: "",
-        academic_session: "",
-        adminRole: "",
-        designation: ""
-    });
-
-  const [prefilledInfo, setPrefilledInfo] = useState<boolean>(false);
+    const [userInputInfo, setUserInputInfo] = useState({});
 
   useEffect(() => {
-    if (loginUser?.email) {
       setUserInputInfo({
-        firstName: loginUser.firstName || "",
-        lastName: loginUser.lastName || "",
-        email: loginUser.email || "",
-        address: loginUser.address || "",
-        dob: loginUser.dob || "",
-        userType: loginUser?.userType || "",
-        phone: loginUser?.phone || 0,
-        alternatePhone: loginUser?.alternatePhone || 0,
-        fatherName: loginUser?.fatherName || "",
-        motherName: loginUser?.motherName || "",
-        doa: loginUser?.doa || "",
-        admission_class: loginUser?.admission_class || "",
-        class_current: loginUser?.class_current || "",
-        academic_session: loginUser?.academic_session || "",
-        adminRole: loginUser?.adminRole || "",
-        designation: loginUser?.designation || "",
+        firstName: currentUser?.firstName || "",
+        gender: currentUser?.gender || "",
+        lastName: currentUser?.lastName || "",
+        email: currentUser?.email || "",
+        address: currentUser?.address || "",
+        dob: currentUser?.dob || "",
+        userType: currentUser?.userType || "",
+        phone: currentUser?.phone || undefined,
+        alternatePhone: currentUser?.alternatePhone || undefined,
+        fatherName: currentUser?.fatherName || "",
+        motherName: currentUser?.motherName || "",
+        doa: currentUser?.doa || "",
+        admission_class: currentUser?.admission_class || "",
+        class_current: currentUser?.class_current || "",
+        academic_session: currentUser?.academic_session || "",
+        adminRole: currentUser?.adminRole || "",
+        designation: currentUser?.designation || "",
+        adminPermissions: currentUser?.adminPermissions || []
       });
       setChangedDob(
-        loginUser?.dob
-          ? parse(loginUser?.dob, "dd-MM-yyyy", new Date())
+        currentUser?.dob
+          ? parse(currentUser?.dob, "dd-MM-yyyy", new Date())
           : parse("01-01-1970", "dd-MM-yyyy", new Date()),
       );
       setChangedDoa(
-        loginUser?.doa
-          ? parse(loginUser?.doa, "dd-MM-yyyy", new Date())
+        currentUser?.doa
+          ? parse(currentUser?.doa, "dd-MM-yyyy", new Date())
           : parse("01-01-1970", "dd-MM-yyyy", new Date()),
       );
-      setPrefilledInfo(true);
-    }
-  }, [loginUser, prefilledInfo]);
+  }, [currentUser]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -134,8 +88,17 @@ const ProfileUpdateForm = ({ loginUser }: { loginUser: LoginUser }) => {
     });
   };
 
+  const handleCheckboxChange = (info: string[]) => {
+    setUserInputInfo({
+      ...userInputInfo,
+      adminPermissions: info
+    })
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+
+    console.log({ name, value});
   
     setUserInputInfo({
       ...userInputInfo,
@@ -180,18 +143,18 @@ const ProfileUpdateForm = ({ loginUser }: { loginUser: LoginUser }) => {
         name={name}
         placeholder={placeholder}
         type={type}
-        value={userInputInfo?.[name as keyof UserInputInfo] !== undefined ? String(userInputInfo[name as keyof UserInputInfo]) : undefined}
+        value={userInputInfo?.[name as keyof LoginUser] !== undefined ? String(userInputInfo[name as keyof LoginUser]) : undefined}
         onChange={(e) => handleChange(e)}
         validate={(value) => formInputValidate(value, errorMessage) as true | string | null | undefined}
       />
     )
   }
 
-  const getSelectField = ({ name, placeholder, label, classNames, options }: { name: string; placeholder: string; label: string; classNames?: string; options: { key: string; label: string; }[]; }) => {
+  const getSelectField = useCallback(({ name, placeholder, label, classNames, options }: { name: string; placeholder: string; label: string; classNames?: string; options: { key: string; label: string; }[]; }) => {
     return (
       <Select
         className={classNames}
-        defaultSelectedKeys={[userInputInfo[name as keyof UserInputInfo]].filter(Boolean) as string[]}
+        defaultSelectedKeys={[currentUser?.[name as keyof LoginUser]].filter(Boolean) as string[]}
         label={label}
         labelPlacement="outside"
         name={name}
@@ -203,7 +166,7 @@ const ProfileUpdateForm = ({ loginUser }: { loginUser: LoginUser }) => {
         ))}
       </Select>
     )
-  }
+  }, [userInputInfo]);
 
   const getDatePicker = ({ name, label, classNames, defaultValue }: { name: string; placeholder: string; label: string; classNames?: string; defaultValue?: string; }) => {
     return (
@@ -229,7 +192,7 @@ const ProfileUpdateForm = ({ loginUser }: { loginUser: LoginUser }) => {
     )
   }
     return (
-        <>
+      userInputInfo?.userType ? <>
             <div className="col-span-2">
                 <Form validationBehavior="aria">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -244,8 +207,12 @@ const ProfileUpdateForm = ({ loginUser }: { loginUser: LoginUser }) => {
                                 <div className="flex justify-between w-full">
                                     {getInputField({ name: "email", errorMessage: "Please enter email", placeholder: "Enter your email", type: "email", label: "email", isDisabled: true })}
                                 </div>
+                                <div className="flex justify-between">
+                                    {getDatePicker({ name: "dob", label: "Birth date", placeholder: "Select your birth date", classNames: "text-left", defaultValue: changedDob ? format(changedDob, "yyyy-MM-dd") : "" })}
+                                    {getSelectField({ name: "gender", placeholder: "Select", label: "Gender", classNames: "ml-2", options: gender() })}
+                                </div>
                                 {userInputInfo?.userType !== "student" && <div className="flex justify-between w-full">
-                                    {getInputField({ name: "designation", errorMessage: "Please enter designation", placeholder: "Enter your designation", type: "text", label: "Designation", classNames: "", isDisabled: false })}
+                                    {getSelectField({ name: "designation", placeholder: "Select", label: "Designation", classNames: "", options: roleTypes })}
                                 </div>}
                                 <div className="flex justify-between w-full">
                                     {getInputField({ name: "phone", errorMessage: "Please enter phone", placeholder: "Enter your phone", type: "number", label: "Phone", isDisabled: false })}
@@ -254,8 +221,18 @@ const ProfileUpdateForm = ({ loginUser }: { loginUser: LoginUser }) => {
                                 <div className="flex justify-between w-full">
                                     {getInputField({ name: "address", errorMessage: "Please enter address", placeholder: "Enter your Address", type: "text", label: "Address", isDisabled: false })}
                                 </div>
-                                <div className="flex justify-between">
-                                    {getDatePicker({ name: "dob", label: "Birth date", placeholder: "Select your birth date", classNames: "text-left w-1/2", defaultValue: changedDob ? format(changedDob, "yyyy-MM-dd") : "" })}
+                                <div>
+                                  <CheckboxGroup
+                                    color="primary"
+                                    label={<div className="text-sm text-default-900">Select Permissions</div>}
+                                    value={userInputInfo.adminPermissions}
+                                    onValueChange={handleCheckboxChange}
+                                    size="sm"
+                                  >
+                                    {permissionOptions?.map((item, i) => {
+                                      return <Checkbox key={item.key} name="adminPermissions" value={item.key}>{item.label}</Checkbox>
+                                    })}
+                                  </CheckboxGroup>
                                 </div>
                                 {userInputInfo?.userType === 'student' ?
                                     <>
@@ -286,6 +263,59 @@ const ProfileUpdateForm = ({ loginUser }: { loginUser: LoginUser }) => {
                                         </div>
                                     </div>
                                 </>) : null}
+                            {(userInputInfo?.designation === 'teacher' || userInputInfo?.designation === 'head_teacher') ?
+                              <>
+                                <h2 className="font-bold pb-2">Teaching details</h2>
+                                <hr className="w-full" />
+                                <div className="grid gap-4">
+                                  <div className="flex justify-between w-full mt-4">
+                                    {getSelectField({ name: "class_teacher", placeholder: "Select", label: "Class teacher", classNames: "", options: classes })}
+                                  </div>
+                                  {inputs.map((value, index) => (
+                                    <div key={index} className="flex gap-2">
+                                      <Select
+                                        name="subject"
+                                        onChange={(e) => handleChangeDynamic(index, 'subject', e.target.value)}
+                                      >
+                                        {subjects?.map((item) => {
+                                          return <SelectItem key={item.key}>{item.label}</SelectItem>
+                                        })}
+                                      </Select>
+                                      <Select
+                                        name="class"
+                                        onChange={(e) => handleChangeDynamic(index, 'class', e.target.value)}
+                                      >
+                                        {classes?.map((item) => {
+                                          return <SelectItem key={item.key}>{item.label}</SelectItem>
+                                        })}
+                                      </Select>
+                                      {index > 0 && <Button
+                                        onClick={() => removeInput(index)}
+                                        isIconOnly
+                                        variant="bordered"
+                                        className="border-0 mt-1"
+                                        color="danger"
+                                        size="sm"
+                                      >
+                                        <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                        </svg>
+
+                                      </Button>}
+                                    </div>
+                                  ))}
+                                  <Button
+                                    onClick={addInput}
+                                    variant="bordered"
+                                    color="success"
+                                    size="sm"
+                                    className="w-16"
+                                  >
+                                    Add new
+                                  </Button>
+                                </div>
+                              </>
+                            : null }
                         </div>
                     </div>
                     <div className="flex w-auto mt-8">
@@ -299,11 +329,11 @@ const ProfileUpdateForm = ({ loginUser }: { loginUser: LoginUser }) => {
                 </Form>
             </div>
             <div className="col-span-1 ml-4">
-                <IDCard details={loginUser || []} />
-                <ImageUploader userId={loginUser?.userId || ""} btnTitle="change profile image" />
+                <IDCard details={currentUser || []} />
+                <ImageUploader userId={currentUser?.userId || ""} btnTitle="change profile image" />
             </div>
         </>
-    )
+    : null)
 }
 
 export default ProfileUpdateForm;

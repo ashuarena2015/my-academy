@@ -5,7 +5,7 @@ import UsersList from "./usersList";
 
 const UsersPage: FC = () => {
     return (
-        <div>
+        <div className="p-6 shadow-lg bg-white">
             <UsersList userTypeProp="defaultType" noTableWrapper={false} />
         </div>
     )

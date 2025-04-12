@@ -70,7 +70,8 @@ routerFee.post("/", async (req, res) => {
               dob: "$student.dob",
               doa: "$student.doa",
               address: "$student.address",
-              academic_session: "$student.academic_session"
+              academic_session: "$student.academic_session",
+              profilePhoto: "$student.profilePhoto"
             },
             payments: 1,
             totalAmount: 1

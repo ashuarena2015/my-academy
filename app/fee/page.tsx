@@ -7,7 +7,7 @@ import FeeTableList from "./feeTable";
 export default function FeePage() {
 
   return (
-    <div>
+    <div className="p-6 shadow-lg bg-white">
       <FeeTableList />
     </div>
   );

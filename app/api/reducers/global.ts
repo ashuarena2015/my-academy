@@ -32,13 +32,10 @@ const globalSlice = createSlice({
     ) => {
       state.message = action.payload.message;
       state.type = action.payload.type;
-    },
-    getSchoolBranches: (state, action) => {
-      state.branches = action.payload
     }
   },
 });
 
 // Export actions & reducer
-export const { globalMessage, getSchoolBranches } = globalSlice.actions;
+export const { globalMessage } = globalSlice.actions;
 export default globalSlice.reducer;

@@ -113,7 +113,7 @@ const BlogPage: FC = () => {
         </Accordion>
       </div>
       <div className="col-span-1 ml-4">
-        <div className="w-full bg-white shadow-lg max-w-[260px] border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100">
+        {allCategories?.length ? <div className="w-full bg-white shadow-lg max-w-[260px] border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100">
           <Listbox aria-label="Dynamic Actions" items={allCategories || []} onAction={(slug) => setCurrentCatName(String(slug))}>
             {(item) => (
               <ListboxItem
@@ -128,7 +128,7 @@ const BlogPage: FC = () => {
               </ListboxItem>
             )}
           </Listbox>
-        </div>
+        </div> : null}
       </div>
     </div>
   );

@@ -20,7 +20,15 @@ import { useRouter } from "next/navigation";
 import AddNewUser from "../components/AddNewUserModal";
 
 export const columns = [
+  { name: "Roll", uid: "userId" },
   { name: "Name", uid: "name" },
+  { name: "Gender", uid: "gender" },
+  { name: "Class", uid: "class" },
+  { name: "Parents", uid: "parents" },
+  { name: "Address", uid: "address" },
+  { name: "DOB", uid: "dob" },
+  { name: "Phone", uid: "phone" },
+  { name: "Email", uid: "email" },
   { name: "Status", uid: "status" },
 ];
 
@@ -36,6 +44,11 @@ export interface UserType {
   email: string;     // Added email property
   status: boolean;   // Added status property
   profilePhoto: string;
+  class_current: string;
+  fatherName: string;
+  motherName: string;
+  gender: string;
+  dob: string;
 }
 
 interface StudentsListProps {
@@ -60,6 +73,11 @@ const StudentsList: React.FC<StudentsListProps> = ({ noTableWrapper }) => {
       email: user.email || "",
       status: user.status || false,
       profilePhoto: user.profilePhoto || "",
+      class_current: user.class_current || "",
+      fatherName: user.fatherName || "",
+      motherName: user.motherName || "",
+      dob: user.dob || "",
+      gender: user.gender || ""
     }))
   );
 
@@ -116,7 +134,7 @@ const StudentsList: React.FC<StudentsListProps> = ({ noTableWrapper }) => {
           </Select>
           <AddNewUser title={'Add new student'} userTypeForm="student" />
         </div>
-        <Table isHeaderSticky className="shadow-none border-0" removeWrapper={noTableWrapper}>
+        <Table isHeaderSticky removeWrapper>
           <TableHeader columns={columns}>
             {(column) => (
               <TableColumn
@@ -130,36 +148,39 @@ const StudentsList: React.FC<StudentsListProps> = ({ noTableWrapper }) => {
           <TableBody>
             {!students?.length ? 
               <TableRow>
-                <TableCell colSpan={2}>No records found!</TableCell>
+                <TableCell colSpan={10}>No records found!</TableCell>
               </TableRow>
               : 
               students?.map((student: UserType, i) => {
                 return (
-                  <TableRow key={i}>
+                  <TableRow key={i} className="border-b-1">
+                    <TableCell>#{student.userId}</TableCell>
                     <TableCell>
-                      <User
-                        as="button"
-                        avatarProps={{
-                          isBordered: true,
-                          src: student?.profilePhoto ? `http://localhost:3001/uploads/${student?.profilePhoto}` : `http://localhost:3001/uploads/default-avatar.png`,
-                        }}
-                        className="text-left"
-                        description={<>
-                          <p>{student?.email} / {student.userId}</p>
-                          <p>{student?.phone}</p>
-                          </>
-                        }
-                        name={
-                          student?.firstName
-                            ? `${student?.firstName} ${student?.lastName}`
-                            : student?.email
-                        }
-                        onClick={() => router.push(`/students/${student.userId}`)}
-                      />
+                      <div>
+                        <User
+                          as="button"
+                          avatarProps={{
+                            isBordered: true,
+                            src: student?.profilePhoto ? `http://localhost:3001/uploads/${student?.profilePhoto}` : `http://localhost:3001/uploads/default-avatar.png`,
+                            size: "md",
+                          }}
+                          className="text-left"
+                          name={
+                            student?.firstName
+                              ? <p style={{ maxWidth: '280px', whiteSpace: 'nowrap' }}>{student?.firstName} {student?.lastName}</p>
+                              : <p style={{ maxWidth: '280px', whiteSpace: 'nowrap' }}>{student?.email}</p>
+                          }
+                          onClick={() => router.push(`/students/${student.userId}`)}
+                        />
+                      </div>
                     </TableCell>
-                    {/* <TableCell>{student.doa}</TableCell>
+                    <TableCell>{student.gender}</TableCell>
+                    <TableCell>{student.class_current}</TableCell>
+                    <TableCell>{student.fatherName}, {student.motherName}</TableCell>
+                    <TableCell>{student.address}</TableCell>
+                    <TableCell>{student.dob}</TableCell>
                     <TableCell>{student.phone}</TableCell>
-                    <TableCell><address>{student.address}</address></TableCell> */}
+                    <TableCell>{student.email}</TableCell>
                     <TableCell>{getStatus(student.status)}</TableCell>
                   </TableRow>
                 )  

@@ -18,7 +18,12 @@ interface UsersState {
   totalExpenses?: number;
   currentUser: User | null;
   userCounter: {},
-  students: User[]
+  students: User[],
+  permissionOptions: any[];
+  branches: any[];
+  roleTypes: any[];
+  classes: any[];
+  subjects: any[];
 }
 
 // Initial state with TypeScript
@@ -30,7 +35,12 @@ const initialState: UsersState = {
   userAttributes: [],
   students: [],
   currentUser: [],
-  userCounter: {}
+  userCounter: {},
+  permissionOptions: [],
+  branches: [],
+  roleTypes: [],
+  classes: [],
+  subjects: []
 };
 
 // Create slice with TypeScript
@@ -64,8 +74,16 @@ const usersSlice = createSlice({
         state.currentUser.profilePhoto = action.payload.photoUrl;
       }
     },
-    usersCounter: (state, action: PayloadAction<{ userCounter: UsersState['userCounter'] }>) => {
+    adminInfo: (state, action) => {
       state.userCounter = action.payload.userCounter;
+      state.permissionOptions = action.payload.permissions;
+      state.branches = action.payload.branches;
+      state.roleTypes = action.payload.roleTypes;
+      state.classes = action.payload.classes;
+      state.subjects = action.payload.subjects;
+    },
+    getPermissions: (state, action) => {
+      state.permissionOptions = action.payload;
     }
   },
 });

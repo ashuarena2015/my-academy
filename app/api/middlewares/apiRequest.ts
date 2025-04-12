@@ -41,12 +41,6 @@ const api =
         data: body,
       });
 
-      if(dispatchType === 'getSchoolBranches') {
-        dispatch({
-          type: "global/getSchoolBranches",
-          payload: response.data
-        });
-      }
       if(dispatchType === 'addNewUserModal') {
         return { isUserAdd: response?.data?.user };
       }
@@ -141,11 +135,17 @@ const api =
         });
         return true;
       }
-      if(dispatchType === "usersCounter") {
+      if(dispatchType === "adminInfo") {
+        console.log('response?.data', response?.data);
         dispatch({
-          type: "users/usersCounter",
+          type: "users/adminInfo",
           payload: {
-            userCounter: response?.data
+            userCounter: response?.data?.counter,
+            branches: response?.data?.branches,
+            permissions: response?.data?.permissions,
+            roleTypes: response?.data?.adminRoles,
+            classes: response?.data?.classes,
+            subjects: response?.data?.subjects,
           }
         });
         return true;

@@ -16,6 +16,9 @@ export default function StudentsLayout({
 
   return (
     <section>
+      <div>
+        <h2 className="text-2xl pb-4">Students</h2>
+      </div>
       {children}
     </section>
   );

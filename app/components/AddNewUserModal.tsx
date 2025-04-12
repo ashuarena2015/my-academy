@@ -28,18 +28,11 @@ interface AddNewUserProps {
 const AddNewUser: FC<AddNewUserProps> = ({ title, userTypeForm }) => {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
-  const { branches } = useSelector((state: RootState) => state.global);
+  const { branches, roleTypes } = useSelector((state: RootState) => state.users);
 
   const [addUserInfo, setAddUserInfo] = useState({
       userType: userTypeForm
   })
-
-  const userTypeRoles = [
-    { key: "principal", label: "Principal" },
-    { key: "teacher", label: "Teacher" },
-    { key: "staff", label: "Staff" },
-    { key: "student", label: "Student" },
-  ];
   
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
@@ -99,7 +92,7 @@ const AddNewUser: FC<AddNewUserProps> = ({ title, userTypeForm }) => {
                         </>)
                       :
                       <Select className="w-full" name="userType" label="Select role" labelPlacement="outside" placeholder="Select role" onChange={handleChange}>
-                          {userTypeRoles.map((role, index) => (
+                          {roleTypes.map((role, index) => (
                               <SelectItem key={role.key}>{role?.label}</SelectItem>
                           ))}
                       </Select> }
@@ -108,7 +101,7 @@ const AddNewUser: FC<AddNewUserProps> = ({ title, userTypeForm }) => {
                           label="Email"
                           labelPlacement="outside"
                           name="email"
-                          placeholder="student@school.com"
+                          placeholder="email@school.com"
                           type="email"
                           onChange={handleChange}
                       />

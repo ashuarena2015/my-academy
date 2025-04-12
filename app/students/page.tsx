@@ -5,7 +5,7 @@ import StudentsList from "./studentsList";
 
 const StudentsPage: FC = () => {
     return (
-        <div>
+        <div className="p-6 shadow-lg bg-white">
             <StudentsList />
         </div>
     )

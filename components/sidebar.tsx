@@ -1,11 +1,12 @@
 "use client";
 
 import { FC } from "react";
-import { Listbox, ListboxItem, cn } from "@heroui/react";
-import { useRouter } from "next/navigation";
+import { Listbox, ListboxItem, cn, Button } from "@heroui/react";
+import { useRouter, usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
 
 import { siteConfig } from "@/config/site";
+import './sidebar.css';
 
 const SideBar: FC = () => {
   const IconWrapper: FC<{ children: React.ReactNode; className?: string }> = ({
@@ -18,6 +19,7 @@ const SideBar: FC = () => {
   );
 
   const router = useRouter();
+  const pathname = usePathname();
 
   const { loginUser } = useSelector((state: any) => state.users);
 
@@ -196,23 +198,23 @@ const SideBar: FC = () => {
   };
 
   return (
-    <div className="border-r-1 flex h-full">
-      <Listbox aria-label="Listbox menu with descriptions" variant="flat">
+    <div className="border-r-1 flex h-full bg-blue-950 text-white">
+      <ul className="side-navigation">
         {siteConfig(loginUser).navItems.filter(x => x.isShow).map((item, i) => (
-          <ListboxItem
+          <li
             key={i}
-            className="p-3 gap-3"
-            startContent={
-              <IconWrapper className={`${item.iconColor} rounded-md`}>
+            onClick={() => router.push(item.href)}
+            className={`${pathname === item.href ? "active" : ""}`}
+          >
+            <div className="flex">
+              <IconWrapper className={`${item.iconColor} rounded-md text-slate-950`}>
                 {getMenuIcon(item.icon, { className: "text-lg p-1" })}
               </IconWrapper>
-            }
-            onPressEnd={() => router.push(item.href)}
-          >
-            {item?.label}
-          </ListboxItem>
+              <span className="ml-1">{item?.label}</span>
+            </div>
+          </li>
         ))}
-      </Listbox>
+      </ul>
     </div>
   );
 };

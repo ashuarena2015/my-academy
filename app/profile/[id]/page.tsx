@@ -2,12 +2,10 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import ProfileUpdateForm from "../ProfileUpdateForm";
-import { useSelector } from "react-redux";
-import { RootState, AppDispatch } from "../../api/store";
+import { AppDispatch } from "../../api/store";
 import { useParams } from "next/navigation";
 
 export default function ProfilePage() {
-  const { currentUser } = useSelector((state: RootState) => state.users);
 
     const dispatch = useDispatch<AppDispatch>();
     const params = useParams();
@@ -27,7 +25,7 @@ export default function ProfilePage() {
     }, []); // Run only once
   return (
       <div className="grid grid-cols-3 w-full p-4">
-        {currentUser && <ProfileUpdateForm loginUser={currentUser} />}
+        <ProfileUpdateForm />
     </div>
   );
 }

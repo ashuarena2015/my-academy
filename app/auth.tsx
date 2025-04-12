@@ -24,7 +24,7 @@ const Auth: FC = () => {
     }) as unknown as { isAuth: boolean };
     const { isAuth } = response || {};
     if(isAuth) {
-      if(pathname === '/login' || pathname === '/register') {
+      if(pathname === '/' || pathname === '/login' || pathname === '/register') {
         router.push('/dashboard');
       }
     } else {
@@ -32,21 +32,8 @@ const Auth: FC = () => {
     }
   };
 
-  const fetchSchoolBranches = async () => {
-    dispatch({
-      type: "apiRequest",
-      payload: {
-        url: `school/branches`,
-        method: "GET",
-        onSuccess: "getSchoolBranches",
-        onError: "GLOBAL_MESSAGE",
-        dispatchType: "getSchoolBranches",
-      },
-    }) as unknown as { isAuth: boolean };
-  };
   useEffect(() => {
       fetchData();
-      fetchSchoolBranches();
   }, []);
 
   return <></>;

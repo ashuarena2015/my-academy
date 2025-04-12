@@ -9,56 +9,60 @@ export const siteConfig = (loginUser: any) => {
         label: "Dashboard",
         href: "/dashboard",
         icon: "Dashboard",
-        iconColor: "bg-success-100",
+        iconColor: "bg-yellow-400",
         isShow: loginUser?.userType !== 'student'
       },
       {
         label: "Students",
         href: "/students",
         icon: "Students",
-        iconColor: "bg-warning-100 ",
+        iconColor: "bg-yellow-400",
         isShow: true
       },
       {
         label: "Fee",
         href: "/fee",
         icon: "Students",
-        iconColor: "bg-warning-100 ",
+        iconColor: "bg-yellow-400",
         isShow: loginUser?.userType !== 'student'
       },
       {
         label: "Users",
         href: "/users",
         icon: "Users",
-        iconColor: "bg-default-200",
+        iconColor: "bg-yellow-400",
         isShow: loginUser?.userType !== 'student'
       },
       {
         label: "Blogs",
         href: "/blogs",
         icon: "News",
-        iconColor: "bg-secondary-100",
+        iconColor: "bg-yellow-400",
         isShow: true
       },
       {
         label: "Events",
         href: "/events",
         icon: "Events",
-        iconColor: "bg-default-200",
+        iconColor: "bg-yellow-400",
         isShow: true
       },
       {
         label: "Chat",
         href: "/chat",
         icon: "Chat",
-        iconColor: "bg-danger-100",
+        iconColor: "bg-yellow-400",
         isShow: true
       },
     ],
     navMenuItems: [
       {
-        label: "Profile",
+        label: "My Profile",
         href: "/profile",
+      },
+      {
+        label: "Edit Profile",
+        href: `/profile/${loginUser?.userId}`,
       },
       {
         label: "Dashboard",

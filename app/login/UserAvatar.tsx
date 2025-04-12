@@ -64,7 +64,8 @@ const UserAvatar = React.memo(() => {
             <p className="font-bold">Signed in as</p>
             <p className="font-bold">{loginUser?.email}</p>
           </DropdownItem>
-          <DropdownItem key="settings" onClick={() => router.push(`/profile/${loginUser?.userId}`)}>My Profile</DropdownItem>
+          <DropdownItem key="settings" onClick={() => router.push(`/users/${loginUser?.userId}`)}>My Profile</DropdownItem>
+          {/* <DropdownItem key="settings" onClick={() => router.push(`/profile/${loginUser?.userId}`)}>Edit Profile</DropdownItem> */}
           <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
           <DropdownItem key="logout" color="danger" onClick={handleLogout}>
             Log Out

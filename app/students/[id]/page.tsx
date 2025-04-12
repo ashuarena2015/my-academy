@@ -22,7 +22,7 @@ const UserDetails: FC = () => {
 
     const dispatch = useDispatch();
     const router = useRouter();
-    const { currentUser, loginUser: { userType: loginUserType } = {}  } = useSelector((state: any) => state.users);
+    const { currentUser, loginUser: { userType: loginUserType, email: loginUserEmail } = {}  } = useSelector((state: any) => state.users);
 
     const params = useParams();
     const { id } = params;
@@ -163,7 +163,7 @@ const UserDetails: FC = () => {
                     </div>
                 </div>
                 <Divider />
-                {loginUserType !== 'student' ?
+                {(loginUserType !== 'student') || (currentUser.email === loginUserEmail) ?
                 <div className="mt-4">
                     <FeeTableList />
                 </div> : null }

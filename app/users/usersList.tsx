@@ -25,7 +25,11 @@ import AddNewUser from "../components/AddNewUserModal";
 
 export const columns = [
   { name: "Name", uid: "name" },
-  { name: "Designation", uid: "designation" }
+  { name: "Designation", uid: "designation" },
+  { name: "Email", uid: "email" },
+  { name: "Phone", uid: "phone" },
+  { name: "Address", uid: "address" },
+  { name: "Status", uid: "status" }
 ];
 
 export interface UserType {
@@ -71,6 +75,8 @@ const UsersList: React.FC<UsersListProps> = ({ userTypeProp, noTableWrapper }) =
       designation: user.designation || "",
     }))
   );
+
+  const { roleTypes } = useSelector(state => state.users);
 
   interface UserFilter {
     userType?: string;
@@ -120,13 +126,13 @@ const UsersList: React.FC<UsersListProps> = ({ userTypeProp, noTableWrapper }) =
           name="userType"
           onChange={handleChange}
         >
-          {staffs().map((data) => (
+          {roleTypes.map((data) => (
             <SelectItem key={data.key}>{data.label}</SelectItem>
           ))}
         </Select>
         <AddNewUser title={'Add new staff'} userTypeForm="" />
       </div>
-      <Table isHeaderSticky className="shadow-none border-0" removeWrapper={noTableWrapper}>
+      <Table isHeaderSticky removeWrapper>
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn
@@ -140,12 +146,12 @@ const UsersList: React.FC<UsersListProps> = ({ userTypeProp, noTableWrapper }) =
         <TableBody>
           {!users?.length ? 
             <TableRow>
-              <TableCell colSpan={2}>No records found!</TableCell>
+              <TableCell colSpan={6}>No records found!</TableCell>
             </TableRow>
             : 
             users?.map((user: UserType, i) => {
               return (
-                <TableRow key={i}>
+                <TableRow key={i} className="border-b-1">
                   <TableCell>
                     <User
                       as="button"
@@ -154,21 +160,18 @@ const UsersList: React.FC<UsersListProps> = ({ userTypeProp, noTableWrapper }) =
                         src: user?.profilePhoto ? `http://localhost:3001/uploads/${user?.profilePhoto}` : `http://localhost:3001/uploads/default-avatar.png`,
                       }}
                       className="text-left"
-                      description={<>
-                        <p>{user?.email} / {user.userId}</p>
-                        <p>{user?.phone}</p>
-                        </>}
                       name={
                         user?.firstName
-                          ? `${user?.firstName} ${user?.lastName}`
-                          : user?.email
+                          ? <p className="font-semibold">{user?.firstName} {user?.lastName}</p>
+                          : <p className="font-semibold">{user?.email}</p>
                       }
                       onClick={() => router.push(`/users/${user.userId}`)}
                     />
                   </TableCell>
-                  {/* <TableCell>{user?.designation}</TableCell>
+                  <TableCell>{user.userType?.toUpperCase()}</TableCell>
+                  <TableCell>{user?.email}</TableCell>
                   <TableCell>{user.phone}</TableCell>
-                  <TableCell><address>{user.address}</address></TableCell> */}
+                  <TableCell><address>{user.address}</address></TableCell>
                   <TableCell>{getStatus(user.status)}</TableCell>
                 </TableRow>
               )  

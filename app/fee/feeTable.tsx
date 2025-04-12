@@ -1,23 +1,21 @@
 "use client";
 
-import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Select, SelectItem, Card, CardBody, Link, Chip} from "@heroui/react";
+import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Select, SelectItem, Card, CardBody, Link, Chip, User, user} from "@heroui/react";
 import { FC, useEffect, useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../api/store";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { academicSessions, classes } from "../profile/common";
 import { Interface } from "readline";
 // import FeeAmount from "./feeAmount"
 
-interface FeeTableListProps {
-  noTableWrapper: boolean;
-}
-
-const FeeTableList: FC<FeeTableListProps> = ({ noTableWrapper }) => {
+const FeeTableList: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const params = useParams();
   const { id } = params;
+
+  const router = useRouter();
 
   const { detailsType, feeDetailsInfo  } = useSelector((state: RootState) => state.fee.feeAllDetails);
 
@@ -106,7 +104,7 @@ const FeeTableList: FC<FeeTableListProps> = ({ noTableWrapper }) => {
                 ))}
               </Select>
             </div>
-            <Table aria-label="Example static collection table" removeWrapper={noTableWrapper}>
+            <Table aria-label="Example static collection table" isHeaderSticky removeWrapper>
               <TableHeader>
                 {detailsType === 'group' ? (
                   <>
@@ -128,12 +126,32 @@ const FeeTableList: FC<FeeTableListProps> = ({ noTableWrapper }) => {
                   detailsType === "group" ? 
                     feeDetailsInfo?.map((fee, i) => {
                       return (
-                        <TableRow key={i}>
-                            <TableCell>               
-                              <Link showAnchorIcon color="foreground" size="sm" href={`/students/${fee.student.userId}`} className="font-semibold">
+                        <TableRow key={i} className="border-b-1">
+                            <TableCell>   
+                            <User
+                                as="button"
+                                avatarProps={{
+                                  isBordered: true,
+                                  src: fee.student?.profilePhoto ? `http://localhost:3001/uploads/${fee.student?.profilePhoto}` : `http://localhost:3001/uploads/default-avatar.png`,
+                                  size: "md"
+                                }}
+                                className="text-left"
+                                description={<>
+                                  <p>{fee.student?.email} / {fee.student.userId}</p>
+                                  <p>{fee.student?.phone}</p>
+                                  </>
+                                }
+                                name={
+                                  fee.student?.firstName
+                                    ? `${fee.student?.firstName} ${fee.student?.lastName}`
+                                    : fee.student?.email
+                                }
+                                onClick={() => router.push(`/students/${fee.student.userId}`)}
+                              />            
+                              {/* <Link showAnchorIcon color="foreground" size="sm" href={`/students/${fee.student.userId}`} className="font-semibold">
                                   {fee.student.firstName} {fee.student.lastName}
-                              </Link>
-                              <p className="text-xs">{fee.student.email} / {fee.student.userId}</p>
+                              </Link> */}
+                              {/* <p className="text-xs">{fee.student.email} / {fee.student.userId}</p> */}
                             </TableCell>
                             <TableCell>{annualFeeInfo?.annualFee}</TableCell>
                             <TableCell>{fee.totalAmount }</TableCell>
