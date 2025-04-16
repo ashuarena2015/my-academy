@@ -27,7 +27,8 @@ const UserSchema = new mongoose.Schema(
     adminPermissions: { type: Array, default: [] },
     profilePhoto: { type: String },
     designation: { type: String },
-    gender: { type: String }
+    gender: { type: String },
+    subjectInClass: { type: Array, default: [] }
   },
   { timestamps: true, discriminatorKey: "kind" },
 );

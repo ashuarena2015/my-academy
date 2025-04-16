@@ -34,6 +34,29 @@ export const siteConfig = (loginUser: any) => {
         isShow: loginUser?.userType !== 'student'
       },
       {
+        label: "Academics",
+        href: "",
+        icon: "Academics",
+        iconColor: "bg-yellow-400",
+        isShow: loginUser?.userType !== 'student',
+        subMenu: [
+          {
+            label: "Class & Teachers",
+            href: "/class-teachers",
+            icon: "",
+            iconColor: "bg-yellow-400",
+            isShow: loginUser?.userType !== 'student',
+          },
+          {
+            label: "Attendance",
+            href: "/attendance",
+            icon: "",
+            iconColor: "bg-yellow-400",
+            isShow: loginUser?.userType !== 'student',
+          }
+        ]
+      },
+      {
         label: "Blogs",
         href: "/blogs",
         icon: "News",

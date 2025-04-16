@@ -24,8 +24,19 @@ const SchoolSubjectsSchema = new mongoose.Schema(
   }
 );
 
+const SchoolSubjectClassTeacherSchema = new mongoose.Schema(
+  {
+    class: { type: String, unique: true },
+    details: {
+      teacher: { type: String, required: true },
+      subject: { type: String, required: true }
+    },
+  }
+);
+
 const SchoolBranch = mongoose.model("branch", SchoolBranchSchema);
 const SchoolClasses = mongoose.model("class", SchoolClassesSchema);
 const SchoolSubjects = mongoose.model("subject", SchoolSubjectsSchema);
+const SchoolSubjectClassTeacher = mongoose.model("subjectclassteacher", SchoolSubjectClassTeacherSchema);
 
-module.exports ={ SchoolBranch, SchoolClasses, SchoolSubjects };
+module.exports ={ SchoolBranch, SchoolClasses, SchoolSubjects, SchoolSubjectClassTeacher };

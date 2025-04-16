@@ -54,7 +54,7 @@ const IDCard: React.FC<IDCardProps> = ({ details }) => {
                     </div>
                     <Divider  className="my-2" />
                     <div className="text-xs mt-2">
-                        {!details?.adminRole ? <p className="font-semibold">{details?.fatherName}, {details?.motherName}</p> : null}
+                        {details?.userType === 'student' ? <p className="font-semibold">{details?.fatherName}, {details?.motherName}</p> : null}
                         <p>Address: {details?.address}</p>
                         <p>Phone: {details?.phone}, {details?.alternatePhone}</p>
                     </div>

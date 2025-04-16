@@ -24,6 +24,7 @@ interface UsersState {
   roleTypes: any[];
   classes: any[];
   subjects: any[];
+  classTeachers: any[];
 }
 
 // Initial state with TypeScript
@@ -40,7 +41,8 @@ const initialState: UsersState = {
   branches: [],
   roleTypes: [],
   classes: [],
-  subjects: []
+  subjects: [],
+  classTeachers: []
 };
 
 // Create slice with TypeScript
@@ -67,6 +69,7 @@ const usersSlice = createSlice({
       state.students = action.payload.students;
     },
     getUserDetail: (state, action: PayloadAction<{ user: User }>) => {
+      console.log('action.payload', action.payload);
       state.currentUser = action.payload;
     },
     uploadProfilePhoto: (state, action: PayloadAction<{ userId: string; photoUrl: string }>) => {
@@ -84,6 +87,9 @@ const usersSlice = createSlice({
     },
     getPermissions: (state, action) => {
       state.permissionOptions = action.payload;
+    },
+    getClassTeachers: (state, action) => {
+      state.classTeachers = action.payload
     }
   },
 });

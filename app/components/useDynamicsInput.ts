@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export const useDynamicInputs = (initial = [{ subject: '', class: '' }]) => {
   const [inputs, setInputs] = useState(initial);
@@ -17,7 +17,6 @@ export const useDynamicInputs = (initial = [{ subject: '', class: '' }]) => {
     setInputs(inputs.filter((_, i) => i !== index));
   };
 
-  console.log({inputs});
   return {
     inputs,
     handleChange,

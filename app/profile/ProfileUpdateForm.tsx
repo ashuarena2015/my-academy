@@ -22,59 +22,50 @@ import { academicSessions, gender } from './common';
 import ImageUploader from '../components/imageUploader/imageUploader';
 import IDCard from "./IdCard";
 
-import { useDynamicInputs } from "../components/useDynamicsInput";
-
 const ProfileUpdateForm: FC = () => {
 
-    const { roleTypes, currentUser, permissionOptions, classes, subjects  } = useSelector((state: RootState) => state.users);
+    const { roleTypes, currentUser, permissionOptions, classes } = useSelector((state: RootState) => state.users);
+    const profileUser = currentUser?.user || null;
 
     const dispatch = useDispatch<AppDispatch>();
-
-    const {
-      inputs,
-      handleChange: handleChangeDynamic,
-      addInput,
-      removeInput
-    } = useDynamicInputs();
 
     const [userInputInfo, setUserInputInfo] = useState({});
 
   useEffect(() => {
       setUserInputInfo({
-        firstName: currentUser?.firstName || "",
-        gender: currentUser?.gender || "",
-        lastName: currentUser?.lastName || "",
-        email: currentUser?.email || "",
-        address: currentUser?.address || "",
-        dob: currentUser?.dob || "",
-        userType: currentUser?.userType || "",
-        phone: currentUser?.phone || undefined,
-        alternatePhone: currentUser?.alternatePhone || undefined,
-        fatherName: currentUser?.fatherName || "",
-        motherName: currentUser?.motherName || "",
-        doa: currentUser?.doa || "",
-        admission_class: currentUser?.admission_class || "",
-        class_current: currentUser?.class_current || "",
-        academic_session: currentUser?.academic_session || "",
-        adminRole: currentUser?.adminRole || "",
-        designation: currentUser?.designation || "",
-        adminPermissions: currentUser?.adminPermissions || []
+        firstName: profileUser?.firstName || "",
+        gender: profileUser?.gender || "",
+        lastName: profileUser?.lastName || "",
+        email: profileUser?.email || "",
+        address: profileUser?.address || "",
+        dob: profileUser?.dob || "",
+        userType: profileUser?.userType || "",
+        phone: profileUser?.phone || undefined,
+        alternatePhone: profileUser?.alternatePhone || undefined,
+        fatherName: profileUser?.fatherName || "",
+        motherName: profileUser?.motherName || "",
+        doa: profileUser?.doa || "",
+        admission_class: profileUser?.admission_class || "",
+        class_current: profileUser?.class_current || "",
+        academic_session: profileUser?.academic_session || "",
+        adminRole: profileUser?.adminRole || "",
+        designation: profileUser?.designation || "",
+        adminPermissions: profileUser?.adminPermissions || [],
       });
       setChangedDob(
-        currentUser?.dob
-          ? parse(currentUser?.dob, "dd-MM-yyyy", new Date())
+        profileUser?.dob
+          ? parse(profileUser?.dob, "dd-MM-yyyy", new Date())
           : parse("01-01-1970", "dd-MM-yyyy", new Date()),
       );
       setChangedDoa(
-        currentUser?.doa
-          ? parse(currentUser?.doa, "dd-MM-yyyy", new Date())
+        profileUser?.doa
+          ? parse(profileUser?.doa, "dd-MM-yyyy", new Date())
           : parse("01-01-1970", "dd-MM-yyyy", new Date()),
       );
-  }, [currentUser]);
+  }, [profileUser]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({userInputInfo});
     dispatch({
       type: "apiRequest",
       payload: {
@@ -96,10 +87,7 @@ const ProfileUpdateForm: FC = () => {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-
-    console.log({ name, value});
-  
+    const { name, value } = e.target;  
     setUserInputInfo({
       ...userInputInfo,
       [name]: value,
@@ -154,7 +142,7 @@ const ProfileUpdateForm: FC = () => {
     return (
       <Select
         className={classNames}
-        defaultSelectedKeys={[currentUser?.[name as keyof LoginUser]].filter(Boolean) as string[]}
+        defaultSelectedKeys={[profileUser?.[name as keyof LoginUser]].filter(Boolean) as string[]}
         label={label}
         labelPlacement="outside"
         name={name}
@@ -191,6 +179,7 @@ const ProfileUpdateForm: FC = () => {
       />
     )
   }
+
     return (
       userInputInfo?.userType ? <>
             <div className="col-span-2">
@@ -221,7 +210,7 @@ const ProfileUpdateForm: FC = () => {
                                 <div className="flex justify-between w-full">
                                     {getInputField({ name: "address", errorMessage: "Please enter address", placeholder: "Enter your Address", type: "text", label: "Address", isDisabled: false })}
                                 </div>
-                                <div>
+                                {userInputInfo?.userType !== 'student' ? <div>
                                   <CheckboxGroup
                                     color="primary"
                                     label={<div className="text-sm text-default-900">Select Permissions</div>}
@@ -233,17 +222,17 @@ const ProfileUpdateForm: FC = () => {
                                       return <Checkbox key={item.key} name="adminPermissions" value={item.key}>{item.label}</Checkbox>
                                     })}
                                   </CheckboxGroup>
-                                </div>
+                                </div> : null}
                                 {userInputInfo?.userType === 'student' ?
                                     <>
                                         <h2 className="font-bold mt-2">Academic details</h2>
                                         <hr className="w-full" />
                                         <div className="flex">
-                                            {getSelectField({ name: "admission_class", placeholder: "Select", label: "Admission class", classNames: "w-full", options: classes() })}
+                                            {getSelectField({ name: "admission_class", placeholder: "Select", label: "Admission class", classNames: "w-full", options: classes })}
                                             {getDatePicker({ name: "doa", label: "Admission date", placeholder: "Select your Admission date", classNames: "text-left ml-2", defaultValue: changedDoa ? format(changedDoa, "yyyy-MM-dd") : "" })}
                                         </div>
                                         <div className="flex justify-between w-full">
-                                            {getSelectField({ name: "class_current", placeholder: "Select", label: "Current class", classNames: "w-full", options: classes() })}
+                                            {getSelectField({ name: "class_current", placeholder: "Select", label: "Current class", classNames: "w-full", options: classes })}
                                             {getSelectField({ name: "academic_session", placeholder: "Select", label: "Academic session", classNames: "w-full ml-2", options: academicSessions() })}
                                         </div>
                                     </> : null}
@@ -263,59 +252,6 @@ const ProfileUpdateForm: FC = () => {
                                         </div>
                                     </div>
                                 </>) : null}
-                            {(userInputInfo?.designation === 'teacher' || userInputInfo?.designation === 'head_teacher') ?
-                              <>
-                                <h2 className="font-bold pb-2">Teaching details</h2>
-                                <hr className="w-full" />
-                                <div className="grid gap-4">
-                                  <div className="flex justify-between w-full mt-4">
-                                    {getSelectField({ name: "class_teacher", placeholder: "Select", label: "Class teacher", classNames: "", options: classes })}
-                                  </div>
-                                  {inputs.map((value, index) => (
-                                    <div key={index} className="flex gap-2">
-                                      <Select
-                                        name="subject"
-                                        onChange={(e) => handleChangeDynamic(index, 'subject', e.target.value)}
-                                      >
-                                        {subjects?.map((item) => {
-                                          return <SelectItem key={item.key}>{item.label}</SelectItem>
-                                        })}
-                                      </Select>
-                                      <Select
-                                        name="class"
-                                        onChange={(e) => handleChangeDynamic(index, 'class', e.target.value)}
-                                      >
-                                        {classes?.map((item) => {
-                                          return <SelectItem key={item.key}>{item.label}</SelectItem>
-                                        })}
-                                      </Select>
-                                      {index > 0 && <Button
-                                        onClick={() => removeInput(index)}
-                                        isIconOnly
-                                        variant="bordered"
-                                        className="border-0 mt-1"
-                                        color="danger"
-                                        size="sm"
-                                      >
-                                        <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                        </svg>
-
-                                      </Button>}
-                                    </div>
-                                  ))}
-                                  <Button
-                                    onClick={addInput}
-                                    variant="bordered"
-                                    color="success"
-                                    size="sm"
-                                    className="w-16"
-                                  >
-                                    Add new
-                                  </Button>
-                                </div>
-                              </>
-                            : null }
                         </div>
                     </div>
                     <div className="flex w-auto mt-8">
@@ -329,8 +265,8 @@ const ProfileUpdateForm: FC = () => {
                 </Form>
             </div>
             <div className="col-span-1 ml-4">
-                <IDCard details={currentUser || []} />
-                <ImageUploader userId={currentUser?.userId || ""} btnTitle="change profile image" />
+                <IDCard details={profileUser || []} />
+                <ImageUploader userId={profileUser?.userId || ""} btnTitle="change profile image" />
             </div>
         </>
     : null)

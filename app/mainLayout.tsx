@@ -5,7 +5,6 @@ import SideBar from "@/components/sidebar";
 import { Navbar } from "@/components/navbar";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "./api/store";
-import { Button } from "@heroui/react";
 
 const MainLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
     const { loginUser } = useSelector((state: RootState) => state.users);

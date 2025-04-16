@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken');
 const { verifyToken } = require('./isAuth');
 const { User, UserRegister } = require('./schema/Users/user');
 const { AdminPermission, AdminRoles } = require('./schema/Users/permission');
-const { SchoolBranch, SchoolClasses, SchoolSubjects } = require('./schema/School/school');
+const { SchoolBranch, SchoolClasses, SchoolSubjects, SchoolSubjectClassTeacher } = require('./schema/School/school');
 
 const fs = require('fs');
 const path = require("path");
@@ -261,14 +261,104 @@ routerUsers.get("/adminInfo", async (req, res) => {
     }
 });
 
+
+
+routerUsers.route("/class-teacher")
+    .post(async (req, res) => {
+        try {
+            const { class: selectedClass, ...props } = req.body;
+            const response = await SchoolSubjectClassTeacher.findOneAndUpdate(
+                {
+                    class: selectedClass
+                },
+                {
+                    ...props
+                },
+                { new: true, upsert: true } // Create if not found
+            );
+            res.status(201).json({ message: "Information saved!", response });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    })
+    .get(async (req, res) => {
+        try {
+            const { class: selectedClass } = req.query;
+            const response = await SchoolSubjectClassTeacher.find(
+                {
+                    class: selectedClass
+                });
+            console.log('req.query', req.query, response);
+            res.status(201).json({ message: "Data fetched!", details: response[0]?.details });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    });
+
 routerUsers.get("/:id", async (req, res) => {
     try {
         const { id } = req.params;
+        const { userType } = req.query;
+        console.log({userType});
         if (!id) {
             return res.status(400).json({ error: "Id is required" });
         }
-        const userDetails = await User.find({ userId: id });
-        res.json(userDetails[0]);
+
+        let userDetails = [];
+        userDetails = await User.find({ userId: id });
+        if(userDetails[0]?.userType === 'teacher') {
+            userDetails = await SchoolSubjectClassTeacher.aggregate([
+                {
+                  $project: {
+                    class: 1,
+                    details: {
+                      $filter: {
+                        input: "$details",
+                        as: "detail",
+                        cond: { $eq: ["$$detail.teacher", id] }
+                      }
+                    }
+                  }
+                },
+                {
+                  $match: {
+                    "details.0": { $exists: true }
+                  }
+                },
+                { $unwind: "$details" },
+                {
+                  $lookup: {
+                    from: "users",
+                    localField: "details.teacher",
+                    foreignField: "userId",
+                    as: "teacherInfo"
+                  }
+                },
+                { $unwind: "$teacherInfo" },
+                {
+                  $group: {
+                    _id: "$details.teacher", // group by teacher ID
+                    user: { $first: "$teacherInfo" },
+                    subjects: {
+                      $push: {
+                        subject: "$details.subject",
+                        class: "$class"
+                      }
+                    }
+                  }
+                }
+            ]);  
+        }
+
+        const grouped = userDetails[0].subjects?.reduce((acc, curr) => {
+            if (!acc[curr.class]) {
+              acc[curr.class] = [];
+            }
+            acc[curr.class].push(curr.subject);
+            return acc;
+        }, {});
+
+        res.json({user: userDetails[0]?.user ? userDetails[0]?.user : userDetails[0], subjectsTeach: grouped});
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

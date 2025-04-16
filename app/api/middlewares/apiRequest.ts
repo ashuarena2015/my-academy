@@ -136,7 +136,6 @@ const api =
         return true;
       }
       if(dispatchType === "adminInfo") {
-        console.log('response?.data', response?.data);
         dispatch({
           type: "users/adminInfo",
           payload: {
@@ -147,6 +146,13 @@ const api =
             classes: response?.data?.classes,
             subjects: response?.data?.subjects,
           }
+        });
+        return true;
+      }
+      if(dispatchType === "getClassTeachers") {
+        dispatch({
+          type: "users/getClassTeachers",
+          payload: response?.data?.details
         });
         return true;
       }

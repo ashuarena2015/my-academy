@@ -170,7 +170,7 @@ const StudentsList: React.FC<StudentsListProps> = ({ noTableWrapper }) => {
                               ? <p style={{ maxWidth: '280px', whiteSpace: 'nowrap' }}>{student?.firstName} {student?.lastName}</p>
                               : <p style={{ maxWidth: '280px', whiteSpace: 'nowrap' }}>{student?.email}</p>
                           }
-                          onClick={() => router.push(`/students/${student.userId}`)}
+                          onClick={() => router.push(`/users/${student.userId}`)}
                         />
                       </div>
                     </TableCell>

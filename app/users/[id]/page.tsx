@@ -8,10 +8,8 @@ import {
     Image,
     Avatar,
     Skeleton,
-    Card,
-    CardBody,
-    Input,
-    Button
+    Button,
+    Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip
 } from "@heroui/react";
 import FeeTableList from "../../fee/feeTable";
 import IDCard from "../../profile/IdCard";
@@ -21,7 +19,7 @@ const UserDetails: FC = () => {
 
     const dispatch = useDispatch();
     const router = useRouter();
-    const { currentUser, loginUser: { userType: loginUserType } = {}  } = useSelector((state: any) => state.users);
+    const { currentUser: { user: profileUser, subjectsTeach = [] }, loginUser: { userType: loginUserType } = {}  } = useSelector((state: any) => state.users);
 
     const params = useParams();
     const { id } = params;
@@ -61,12 +59,12 @@ const UserDetails: FC = () => {
         }
     }
 
-    const profilePhoto = currentUser?.profilePhoto ? `http://localhost:3001/uploads/${currentUser?.profilePhoto}` : `http://localhost:3001/uploads/default-avatar.png`;
+    const profilePhoto = profileUser?.profilePhoto ? `http://localhost:3001/uploads/${profileUser?.profilePhoto}` : `http://localhost:3001/uploads/default-avatar.png`;
 
     return (
         <div className="w-full grid grid-cols-5 gap-4">
             <div className="col-span-3">
-                {!currentUser?.firstName
+                {!profileUser?.firstName
                 ? (
                     <div className="max-w-[300px] w-full flex items-center gap-3 mb-5">
                         <div>
@@ -90,12 +88,12 @@ const UserDetails: FC = () => {
                                 width={80}
                                 className="rounded-full border-default-200 mb-1"
                             />                        
-                            {loginUserType !== 'student' ? <ImageUploader userId={currentUser?.userId} /> : null}
+                            {loginUserType !== 'student' ? <ImageUploader btnTitle="" userId={profileUser?.userId} /> : null}
                         </div>
                         <div className="flex flex-col justify-center">
-                            <p className="text-2xl">{currentUser?.firstName} {currentUser?.lastName}</p>
-                            <p className="text-small text-default-500">{currentUser?.email}</p>
-                            <p className="text-small text-default-500">{currentUser?.userType}</p>
+                            <p className="text-2xl">{profileUser?.firstName} {profileUser?.lastName}</p>
+                            <p className="text-small text-default-500">{profileUser?.email}</p>
+                            <p className="text-small text-default-500">{profileUser?.userType}</p>
                         </div>
                     </div>
                 )}
@@ -104,7 +102,7 @@ const UserDetails: FC = () => {
                         color="primary"
                         size="sm"
                         className="mb-4"
-                        onClick={() => router.push(`/profile/${currentUser.userId}`)}
+                        onClick={() => router.push(`/profile/${profileUser.userId}`)}
                     >
                         Profile update
                     </Button>
@@ -123,9 +121,23 @@ const UserDetails: FC = () => {
                             </div>
                             <div className="text-sm">
                                 <p className="text-default-500">Phone</p>
-                                <p>{currentUser?.phone}, {currentUser?.alternatePhone}</p>
+                                <p>{profileUser?.phone}, {profileUser?.alternatePhone}</p>
                             </div>
                         </div>
+                        {profileUser?.userType === 'student' ? <div className="flex gap-4">
+                            <div>
+                                <Avatar
+                                    showFallback
+                                    fallback={getIcon('parent')}
+                                    color="secondary"
+                                    size="lg"
+                                />
+                            </div>
+                            <div className="text-sm">
+                                <p className="text-default-500">Parents</p>
+                                <p>{profileUser?.fatherName}, {profileUser?.motherName}</p>
+                            </div>
+                        </div> : null}
                         <div className="flex gap-4">
                             <div>
                                 <Avatar
@@ -137,19 +149,38 @@ const UserDetails: FC = () => {
                             </div>
                             <div className="text-sm">
                                 <p className="text-default-500">Address</p>
-                                <p>{currentUser?.address}</p>
+                                <p>{profileUser?.address}</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <Divider />
-                {loginUserType === 'student' ?
+                {profileUser?.userType === 'teacher' ? <Table className="mt-4">
+                    <TableHeader>
+                            <TableColumn>Class</TableColumn>
+                            <TableColumn>Subjects</TableColumn>
+                    </TableHeader>
+                    <TableBody>
+                    {Object.keys(subjectsTeach)?.map((item, i) => (
+                        <TableRow key={i}>
+                            <TableCell>{item}</TableCell>
+                            <TableCell>
+                                {subjectsTeach[item]?.map(sub => {
+                                    console.log(sub)
+                                    return <Chip className="mr-1" color="secondary">{sub?.replace("_", " ")?.toUpperCase()}</Chip>
+                                })}
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                    </TableBody>
+                </Table> : null }
+                {profileUser?.userType === 'student' ?
                 <div className="mt-4">
-                    <FeeTableList noTableWrapper={false} />
+                    <FeeTableList />
                 </div> : null }
             </div>
             <div className="col-span-2">
-                <IDCard details={currentUser || []} />
+                <IDCard details={profileUser || []} />
             </div>
         </div>
     )
