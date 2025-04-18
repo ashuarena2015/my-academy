@@ -23,8 +23,6 @@ routerUsers.post("/", async (req, res) => {
     try {
         const { class_current, userAll, userType } = req.body;
 
-        console.log({userType});
-
         if (!class_current && !userAll) {
             return res.status(400).json({ error: "Class is required" });
         }
@@ -40,7 +38,6 @@ routerUsers.post("/", async (req, res) => {
             // Get both students and non-students of a specific class
             const all = await User.find({ class_current })
                                   .populate("class_current"); // Adjust as needed
-            console.log({all});
             // Separate them into users and students
             users = all.filter(u => u.userType !== "student");
             students = all.filter(u => u.userType === "student");
@@ -269,7 +266,6 @@ routerUsers.route("/class-teacher")
     .post(async (req, res) => {
         try {
             const { class: selectedClass, classTeacherIs,  ...props } = req.body;
-            console.log({classTeacherIs});
             const response = await SchoolSubjectClassTeacher.findOneAndUpdate(
                 {
                     class: selectedClass
@@ -333,15 +329,18 @@ routerUsers.route("/attendance")
     })
     .get(async (req, res) => {
         try {
-            const { ...props } = req.query;
-            console.log('props query', props);
+            const { startDate, endDate, ...props } = req.query;
+            
             const response = await SchoolStudentAttendance.find(
                 {
-                  class: props?.class,
-                  date: props?.date
+                    class: "PP1-A",
+                    date: {
+                        $gte: startDate,
+                        $lte: endDate
+                    }
                 }
-            );              
-            res.status(201).json({ message: "Fetched successfully!", attendanceInfo: response[0] });
+            );          
+            res.status(201).json({ message: "Fetched successfully!", attendanceInfo: response });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

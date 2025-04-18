@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, DatePicker, Switch, Input, Button } from "@heroui/react";
+import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell,
+  User, DatePicker, Switch, Input, Button, DateRangePicker, Chip } from "@heroui/react";
 import { RootState } from "../api/store"; // Adjust the path to your store file
 import { useSelector, useDispatch } from "react-redux";
-import { format } from "date-fns";
+import { format, addDays, differenceInDays, parseISO } from "date-fns";
 import { parseDate } from "@internationalized/date";
 
 const AttendancePage = () => {
@@ -53,28 +54,30 @@ const AttendancePage = () => {
     setSelectedDate(format(event, 'yyyy-MM-dd'))
   }
 
+  const fetchAttendance = async (dateRange: { startDate: string; endDate: string; }) => {
+    const response = await dispatch({
+      type: "apiRequest",
+      payload: {
+        url: `user/attendance`,
+        method: "GET",
+        onSuccess: "users/getStudentAttendance",
+        onError: "GLOBAL_MESSAGE",
+        dispatchType: "getStudentAttendance",
+        params: {
+          class: loginUser?.classTeacherOf,
+          startDate: dateRange?.startDate,
+          endDate: dateRange?.endDate
+        }
+      },
+    });
+    setMarkedAttendanceInfo(response?.data);
+  };
+
   useEffect(() => {
-    const fetchAttendance = async () => {
-      const response = await dispatch({
-        type: "apiRequest",
-        payload: {
-          url: `user/attendance`,
-          method: "GET",
-          onSuccess: "users/getStudentAttendance",
-          onError: "GLOBAL_MESSAGE",
-          dispatchType: "getStudentAttendance",
-          params: {
-            class: loginUser?.classTeacherOf,
-            date: selectedDate
-          }
-        },
-      });
-      setMarkedAttendanceInfo(response?.data);
-    };
-    fetchAttendance();
+    fetchAttendance({ startDate: selectedDate, endDate: selectedDate });
   }, [selectedDate]);
 
-  console.log({markedAttendanceInfo});
+  // console.log({markedAttendanceInfo});
 
   const handleSave = () => {
     let data: { status: { studentId: string; status: string; remarks: string; }[]; date: string; class: string; classTeacherIs: string; } = {
@@ -109,26 +112,123 @@ const AttendancePage = () => {
 
   const defaultStatusText = (student: { userId: string } | any) => statusText[`status_${student.userId}`] !== undefined ? statusText[`status_${student.userId}`] : 'Absent'
   
+  const [isAttendanceSearch, setIsAttendanceSearch] = useState<boolean>(false);
+
+  const [totalSearchDays, setTotalSearchdays] = useState(0);
+
+  const [selectedDateRange, setSelectedDateRange] = useState({})
+
+  const handleDateRange = (event: any) => {
+    const { start, end } = event;
+    const dateRange = { startDate: format(start, 'yyyy-MM-dd'), endDate: format(end, 'yyyy-MM-dd') };
+    const totalDays = differenceInDays(
+      new Date(dateRange?.endDate),
+      new Date(dateRange?.startDate)
+    ) + 1;
+      
+    setTotalSearchdays(totalDays);
+    setSelectedDateRange(dateRange);
+    fetchAttendance(dateRange);
+  }
+
+  const renderDateRangeCell = () => {
+
+    let allCellsDateCollumn = [<TableColumn>--</TableColumn>];
+    if(Object.keys(selectedDateRange)?.length) {
+      const start = parseISO(selectedDateRange?.startDate)    
+      const end = parseISO(selectedDateRange?.endDate);
+      const totalSearchDays = differenceInDays(end, start) + 1;
+      for(let k = 0; k < totalSearchDays; k++) {
+        delete allCellsDateCollumn[0];
+        const currentDate = addDays(start, k);
+        const formattedDate = format(currentDate, "yyyy-MM-dd");
+        allCellsDateCollumn.push(<TableColumn key={k}>{formattedDate}</TableColumn>);
+      }
+    }
+    // console.log({markedAttendanceInfo});
+    return allCellsDateCollumn;
+  }
+
+  const renderAttendanceCell = (studentId: string) => {
+    let allCellsAttendance = [];
+    if(Object.keys(selectedDateRange)?.length) {
+      const start = parseISO(selectedDateRange?.startDate)    
+      const end = parseISO(selectedDateRange?.endDate);
+      const totalSearchDays = differenceInDays(end, start) + 1;
+      for(let k = 0; k < totalSearchDays; k++) {
+        const currentDate = addDays(start, k);
+        const formattedDate = format(currentDate, "yyyy-MM-dd");
+        const getStatus = markedAttendanceInfo?.filter(x => x.date === formattedDate)[0];
+        const status = getStatus?.status.filter(x => x.studentId === studentId)[0]?.status;
+        allCellsAttendance.push(
+          <TableCell key={k}>
+            <Chip size="sm" color={status === 'Present' ? "success" : "danger"}>{status || 'No data!'}</Chip>
+          </TableCell>
+        );
+      }
+    }
+    // console.log({markedAttendanceInfo});
+    return allCellsAttendance;
+  }
+
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
-        <p>Class: {loginUser?.classTeacherOf}</p>
-        <DatePicker
-          className="max-w-[284px]"
-          label="Attendance date"
-          maxValue={parseDate(format(new Date(), 'yyyy-MM-dd'))}
-          onChange={handleDateChange}
-          defaultValue={parseDate(selectedDate)}
-        />
+        <div>
+          <p>Class: {loginUser?.classTeacherOf}</p>
+          <p>Today's date: {format(selectedDate, 'dd MMM, yyyy')}</p>
+        </div>
+        <div>
+          <Button
+            color="primary"
+            onPress={handleSave}
+          >
+            Save
+          </Button>
+          <Button color="secondary" onPress={() => setIsAttendanceSearch((prev) => !prev)} className="ml-2">View attendance</Button>
+        </div>
       </div>
-      <Table aria-label="Example static collection table">
-        <TableHeader>
-          <TableColumn>Name</TableColumn>
-          <TableColumn>Status</TableColumn>
-          <TableColumn>Remarks</TableColumn>
-        </TableHeader>
-        <TableBody>
-          <>
+      {isAttendanceSearch
+      ? <>
+          <div className="my-4">
+            <DateRangePicker
+              defaultValue={{
+                start: parseDate(format(new Date(), 'yyyy-MM-dd')),
+                end: parseDate(format(new Date(), 'yyyy-MM-dd')),
+              }}
+              maxValue={parseDate(format(new Date(), 'yyyy-MM-dd'))}
+              label="Select date from-to"
+              onChange={handleDateRange}
+            />
+          </div>
+          {selectedDateRange?.startDate ? <Table aria-label="Example static collection table">
+            <TableHeader>
+              <>
+                <TableColumn>Name</TableColumn>
+                {renderDateRangeCell()}
+              </>
+            </TableHeader>
+            <TableBody>
+              {students?.map((stu, i) => {
+                return (
+                  <TableRow key={i}>
+                      <TableCell colSpan={1}>{stu?.firstName} {stu?.lastName}</TableCell>
+                      {renderAttendanceCell(stu?.userId)?.length > 1 ? renderAttendanceCell(stu?.userId) : <TableCell colSpan={totalSearchDays || 1}>--</TableCell>}
+                      {/* <TableCell colSpan={totalSearchDays || 1}>--</TableCell> */}
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table> : null}
+          </>
+      : (
+        <Table aria-label="Example static collection table">
+          <TableHeader>
+            <TableColumn>Name</TableColumn>
+            <TableColumn>Status</TableColumn>
+            <TableColumn>Remarks</TableColumn>
+          </TableHeader>
+          <TableBody>
             {students?.map((student, i) => (
               <TableRow key={i}>
                 <TableCell>
@@ -161,19 +261,9 @@ const AttendancePage = () => {
                 </TableCell>
               </TableRow>
             ))}
-            <TableRow>
-              <TableCell colSpan={3} className="text-right">
-                <Button
-                  color="primary"
-                  onPress={handleSave}
-                >
-                  Save
-                </Button>
-              </TableCell>
-            </TableRow>
-          </>
-        </TableBody>
-      </Table>
+          </TableBody>
+        </Table>
+      )}
     </div>
   );
 }
