@@ -28,7 +28,8 @@ const UserSchema = new mongoose.Schema(
     profilePhoto: { type: String },
     designation: { type: String },
     gender: { type: String },
-    subjectInClass: { type: Array, default: [] }
+    subjectInClass: { type: Array, default: [] },
+    classTeacherOf: { type: String }
   },
   { timestamps: true, discriminatorKey: "kind" },
 );

@@ -17,10 +17,10 @@ const SchoolClassesSchema = new mongoose.Schema(
 
 const SchoolSubjectsSchema = new mongoose.Schema(
   {
-    subjects: {
-      key: { type: String, required: true },
-      label: { type: String, required: true }
-    },
+    subjectClass: [{
+      subjects: { type: Array, required: true },
+      classes: { type: Array, required: true }
+    }],
   }
 );
 
@@ -34,9 +34,24 @@ const SchoolSubjectClassTeacherSchema = new mongoose.Schema(
   }
 );
 
+const SchoolStudentAttendanceSchema = new mongoose.Schema(
+  {
+    class: { type: String },
+    classTeacherIs: { type: String },
+    date: { type: String },
+    status: [{
+      status: { type: String, required: true },
+      studentId: { type: String, required: true },
+      remarks: { type: String, required: true }
+    }],
+  }
+);
+
 const SchoolBranch = mongoose.model("branch", SchoolBranchSchema);
 const SchoolClasses = mongoose.model("class", SchoolClassesSchema);
 const SchoolSubjects = mongoose.model("subject", SchoolSubjectsSchema);
 const SchoolSubjectClassTeacher = mongoose.model("subjectclassteacher", SchoolSubjectClassTeacherSchema);
+const SchoolStudentAttendance = mongoose.model("studentattendance", SchoolStudentAttendanceSchema);
 
-module.exports ={ SchoolBranch, SchoolClasses, SchoolSubjects, SchoolSubjectClassTeacher };
+
+module.exports ={ SchoolBranch, SchoolClasses, SchoolSubjects, SchoolSubjectClassTeacher, SchoolStudentAttendance };

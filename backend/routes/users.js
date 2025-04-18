@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken');
 const { verifyToken } = require('./isAuth');
 const { User, UserRegister } = require('./schema/Users/user');
 const { AdminPermission, AdminRoles } = require('./schema/Users/permission');
-const { SchoolBranch, SchoolClasses, SchoolSubjects, SchoolSubjectClassTeacher } = require('./schema/School/school');
+const { SchoolBranch, SchoolClasses, SchoolSubjects, SchoolSubjectClassTeacher, SchoolStudentAttendance } = require('./schema/School/school');
 
 const fs = require('fs');
 const path = require("path");
@@ -22,6 +22,8 @@ const sharp = require("sharp");
 routerUsers.post("/", async (req, res) => {
     try {
         const { class_current, userAll, userType } = req.body;
+
+        console.log({userType});
 
         if (!class_current && !userAll) {
             return res.status(400).json({ error: "Class is required" });
@@ -38,7 +40,7 @@ routerUsers.post("/", async (req, res) => {
             // Get both students and non-students of a specific class
             const all = await User.find({ class_current })
                                   .populate("class_current"); // Adjust as needed
-
+            console.log({all});
             // Separate them into users and students
             users = all.filter(u => u.userType !== "student");
             students = all.filter(u => u.userType === "student");
@@ -253,7 +255,7 @@ routerUsers.get("/adminInfo", async (req, res) => {
                 branches,
                 adminRoles: adminRoles[0].roles,
                 classes: classes[0].classes,
-                subjects: subjects[0]?.subjects
+                subjects: subjects[0]?.subjectClass
             });
         });
     } catch (error) {
@@ -266,7 +268,8 @@ routerUsers.get("/adminInfo", async (req, res) => {
 routerUsers.route("/class-teacher")
     .post(async (req, res) => {
         try {
-            const { class: selectedClass, ...props } = req.body;
+            const { class: selectedClass, classTeacherIs,  ...props } = req.body;
+            console.log({classTeacherIs});
             const response = await SchoolSubjectClassTeacher.findOneAndUpdate(
                 {
                     class: selectedClass
@@ -276,6 +279,16 @@ routerUsers.route("/class-teacher")
                 },
                 { new: true, upsert: true } // Create if not found
             );
+            if(response && classTeacherIs) {
+                await User.updateOne(
+                    { classTeacherOf: selectedClass },
+                    { $unset: { classTeacherOf: "" } } // or: { classTeacherOf: null }
+                );
+                await User.findOneAndUpdate(
+                    { userId: classTeacherIs },
+                    { classTeacherOf: selectedClass }
+                );
+            }
             res.status(201).json({ message: "Information saved!", response });
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -288,18 +301,56 @@ routerUsers.route("/class-teacher")
                 {
                     class: selectedClass
                 });
-            console.log('req.query', req.query, response);
             res.status(201).json({ message: "Data fetched!", details: response[0]?.details });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
     });
 
+routerUsers.route("/attendance")
+    .post(async (req, res) => {
+        try {
+            const { ...props } = req.body;
+
+            const response = await SchoolStudentAttendance.findOneAndUpdate(
+                {
+                  class: props?.class,
+                  date: props?.date
+                },
+                {
+                  $set: { ...props }
+                },
+                {
+                  new: true,      // Return the modified document
+                  upsert: true,   // Create the document if it doesn't exist
+                  setDefaultsOnInsert: true // Apply default values on insert
+                }
+            );              
+            res.status(201).json({ message: "Attendance marked successfully!", response });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    })
+    .get(async (req, res) => {
+        try {
+            const { ...props } = req.query;
+            console.log('props query', props);
+            const response = await SchoolStudentAttendance.find(
+                {
+                  class: props?.class,
+                  date: props?.date
+                }
+            );              
+            res.status(201).json({ message: "Fetched successfully!", attendanceInfo: response[0] });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    })
+
 routerUsers.get("/:id", async (req, res) => {
     try {
         const { id } = req.params;
         const { userType } = req.query;
-        console.log({userType});
         if (!id) {
             return res.status(400).json({ error: "Id is required" });
         }

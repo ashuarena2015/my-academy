@@ -23,7 +23,7 @@ interface UsersState {
   branches: any[];
   roleTypes: any[];
   classes: any[];
-  subjects: any[];
+  subjectsClasses: any[];
   classTeachers: any[];
 }
 
@@ -41,7 +41,7 @@ const initialState: UsersState = {
   branches: [],
   roleTypes: [],
   classes: [],
-  subjects: [],
+  subjectsClasses: [],
   classTeachers: []
 };
 
@@ -83,13 +83,13 @@ const usersSlice = createSlice({
       state.branches = action.payload.branches;
       state.roleTypes = action.payload.roleTypes;
       state.classes = action.payload.classes;
-      state.subjects = action.payload.subjects;
+      state.subjectsClasses = action.payload.subjects;
     },
     getPermissions: (state, action) => {
       state.permissionOptions = action.payload;
     },
     getClassTeachers: (state, action) => {
-      state.classTeachers = action.payload
+      state.classTeachers = action.payload || []
     }
   },
 });

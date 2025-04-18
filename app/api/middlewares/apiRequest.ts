@@ -104,6 +104,7 @@ const api =
         return true;
       }
       if(dispatchType === "getAllUsers") {
+        console.log({response});
         dispatch({
           type: "users/getAllUsers",
           payload: {
@@ -120,6 +121,11 @@ const api =
           },
         });
         return true;
+      }
+      if(dispatchType === "getStudentAttendance") {
+        return {
+          data: response?.data?.attendanceInfo
+        }
       }
       if(dispatchType === "getUserDetail") {
         dispatch({
@@ -155,6 +161,9 @@ const api =
           payload: response?.data?.details
         });
         return true;
+      }
+      if(dispatchType === 'setClassTeachers') {
+        return { isClassTeachersUpdate: true };
       }
     } catch (error: any) {
       if(error?.status !== 403) {
