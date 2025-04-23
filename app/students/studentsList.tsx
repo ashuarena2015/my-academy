@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Table,
@@ -11,26 +11,9 @@ import {
   Chip,
   Select,
   SelectItem,
-  useDisclosure,
 } from "@heroui/react";
 import { RootState } from "../api/store";
-
-import { classes } from '../profile/common';
 import { useRouter } from "next/navigation";
-import AddNewUser from "../components/AddNewUserModal";
-
-export const columns = [
-  { name: "Roll", uid: "userId" },
-  { name: "Name", uid: "name" },
-  { name: "Gender", uid: "gender" },
-  { name: "Class", uid: "class" },
-  { name: "Parents", uid: "parents" },
-  { name: "Address", uid: "address" },
-  { name: "DOB", uid: "dob" },
-  { name: "Phone", uid: "phone" },
-  { name: "Email", uid: "email" },
-  { name: "Status", uid: "status" },
-];
 
 export interface UserType {
   id: number;
@@ -52,10 +35,10 @@ export interface UserType {
 }
 
 interface StudentsListProps {
-  noTableWrapper?: boolean;
+  listCompact?: boolean;
 }
 
-const StudentsList: React.FC<StudentsListProps> = ({ noTableWrapper }) => {
+const StudentsList: React.FC<StudentsListProps> = ({ listCompact }) => {
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -88,6 +71,9 @@ const StudentsList: React.FC<StudentsListProps> = ({ noTableWrapper }) => {
   const [studentFilter, setStudentFilter] = useState<StudentFilter>({
     class_current: "REC-A"
   });
+
+  const { classes } = useSelector((state: RootState) => state.users);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target;
     
@@ -118,76 +104,114 @@ const StudentsList: React.FC<StudentsListProps> = ({ noTableWrapper }) => {
       <span className="text-green-100">Active</span>
     </Chip>
   }
+
+  const columns = listCompact ? [
+    { name: "Name", uid: "name" },
+    { name: "Phone", uid: "phone" },
+    { name: "Address", uid: "address" },
+  ]: [
+    { name: "Name", uid: "name" },
+    { name: "Parents", uid: "parents" },
+    { name: "Address", uid: "address" },
+    { name: "Phone", uid: "phone" },
+  ];
+
   return (
     <div>
         <div className="flex justify-between items-center mb-2">
           <Select
             className="w-48 mb-1"
-            label={studentFilter?.class_current || "Select class"}
-            labelPlacement=" "
+            placeholder="REC-A"
             name="class_current"
             onChange={handleChange}
           >
-            {classes().map((data) => (
+            {classes?.map((data) => (
               <SelectItem key={data.key}>{data.label}</SelectItem>
             ))}
           </Select>
-          <AddNewUser title={'Add new student'} userTypeForm="student" />
         </div>
-        <Table isHeaderSticky removeWrapper>
-          <TableHeader columns={columns}>
-            {(column) => (
-              <TableColumn
-                key={column.uid}
-                align={column.uid === "actions" ? "center" : "start"}
-              >
-                {column.name}
-              </TableColumn>
-            )}
-          </TableHeader>
-          <TableBody>
-            {!students?.length ? 
-              <TableRow>
-                <TableCell colSpan={10}>No records found!</TableCell>
-              </TableRow>
-              : 
-              students?.map((student: UserType, i) => {
-                return (
-                  <TableRow key={i} className="border-b-1">
-                    <TableCell>#{student.userId}</TableCell>
-                    <TableCell>
-                      <div>
-                        <User
-                          as="button"
-                          avatarProps={{
-                            isBordered: true,
-                            src: student?.profilePhoto ? `http://localhost:3001/uploads/${student?.profilePhoto}` : `http://localhost:3001/uploads/default-avatar.png`,
-                            size: "md",
-                          }}
-                          className="text-left"
-                          name={
-                            student?.firstName
-                              ? <p style={{ maxWidth: '280px', whiteSpace: 'nowrap' }}>{student?.firstName} {student?.lastName}</p>
-                              : <p style={{ maxWidth: '280px', whiteSpace: 'nowrap' }}>{student?.email}</p>
-                          }
-                          onClick={() => router.push(`/users/${student.userId}`)}
-                        />
-                      </div>
-                    </TableCell>
-                    <TableCell>{student.gender}</TableCell>
-                    <TableCell>{student.class_current}</TableCell>
-                    <TableCell>{student.fatherName}, {student.motherName}</TableCell>
-                    <TableCell>{student.address}</TableCell>
-                    <TableCell>{student.dob}</TableCell>
-                    <TableCell>{student.phone}</TableCell>
-                    <TableCell>{student.email}</TableCell>
-                    <TableCell>{getStatus(student.status)}</TableCell>
-                  </TableRow>
-                )  
-              })
-            }
-          </TableBody>
-        </Table>
+        <div>
+          <Table isHeaderSticky removeWrapper>
+            <TableHeader columns={columns}>
+              {(column) => (
+                <TableColumn
+                  key={column.uid}
+                  align={column.uid === "actions" ? "center" : "start"}
+                >
+                  {column.name}
+                </TableColumn>
+              )}
+            </TableHeader>
+            <TableBody>
+              {!students?.length ? 
+                <TableRow>
+                  <TableCell colSpan={listCompact ? 3 : 4}>No records found!</TableCell>
+                </TableRow>
+                : 
+                listCompact ? students?.map((student: UserType, i) => {
+                  return (
+                    <TableRow key={i} className="border-b-1">
+                      <TableCell>
+                        <div>
+                          <User
+                            as="button"
+                            avatarProps={{
+                              src: student?.profilePhoto ? `http://localhost:3001/uploads/${student?.profilePhoto}` : `http://localhost:3001/uploads/default-avatar.png`,
+                              className: 'min-w-14 min-h-14'
+                            }}
+                            className="text-left"
+                            name={
+                              <div>
+                                {student?.firstName
+                                  ? <p style={{ maxWidth: '180px', whiteSpace: 'nowrap' }}>{student?.firstName} {student?.lastName}</p>
+                                  : <p style={{ maxWidth: '180px', whiteSpace: 'nowrap' }}>{student?.email}</p>}
+                                <p className="text-xs text-default-400">#{student.userId}</p>
+                                <p className="text-xs text-default-400">{student.email}</p>
+                              </div>
+                            }
+                            onClick={() => router.push(`/users/${student.userId}`)}
+                          />
+                        </div>
+                      </TableCell>
+                      <TableCell>{student.phone}</TableCell>
+                      <TableCell className="min-w-52">{student.address}</TableCell>
+                    </TableRow>
+                  )  
+                }) : students?.map((student: UserType, i) => {
+                  return (
+                    <TableRow key={i} className="border-b-1">
+                      <TableCell>
+                        <div>
+                          <User
+                            as="button"
+                            avatarProps={{
+                              src: student?.profilePhoto ? `http://localhost:3001/uploads/${student?.profilePhoto}` : `http://localhost:3001/uploads/default-avatar.png`,
+                              className: 'min-w-14 min-h-14'
+                            }}
+                            className="text-left"
+                            name={
+                              <div>
+                                {student?.firstName
+                                  ? <p style={{ maxWidth: '180px', whiteSpace: 'nowrap' }}>{student?.firstName} {student?.lastName}</p>
+                                  : <p style={{ maxWidth: '180px', whiteSpace: 'nowrap' }}>{student?.email}</p>}
+                                <p className="text-xs text-default-400">#{student.userId}</p>
+                                <p className="text-xs text-default-400">{student.email}</p>
+                              </div>
+                            }
+                            onClick={() => router.push(`/users/${student.userId}`)}
+                          />
+                        </div>
+                      </TableCell>
+                      <TableCell>{student.fatherName}, {student.motherName}</TableCell>
+                      <TableCell className="min-w-52">{student.address}</TableCell>
+                      <TableCell>{student.phone}</TableCell>
+                    </TableRow>
+                  )  
+                })
+              }
+            </TableBody>
+          </Table>
+        </div>
       </div>
   );
 };

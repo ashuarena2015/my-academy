@@ -5,9 +5,7 @@ import { FC, useEffect, useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../api/store";
 import { useParams, useRouter } from "next/navigation";
-import { academicSessions, classes } from "../profile/common";
-import { Interface } from "readline";
-// import FeeAmount from "./feeAmount"
+import { academicSessions } from "../profile/common";
 
 const FeeTableList: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -18,9 +16,10 @@ const FeeTableList: FC = () => {
   const router = useRouter();
 
   const { detailsType, feeDetailsInfo  } = useSelector((state: RootState) => state.fee.feeAllDetails);
+  const { classes } = useSelector((state: RootState) => state.users);
 
   const [academicSession, setAcademicSession] = useState<string>(academicSessions()[0]?.key || "");
-  const [classCurrent, setClassCurrent] = useState<string>(classes()[0]?.key || "");
+  const [classCurrent, setClassCurrent] = useState<string>(classes[0]?.key || "");
   const [studentId, setStudentId] = useState<string>(typeof id === 'string' ? id : '');
   const [annualFeeInfo, setAnnualFeeInfo] = useState<{ annualFee: number } | null>(null);
 
@@ -84,11 +83,11 @@ const FeeTableList: FC = () => {
               {!studentId ?
                 <Select
                   className="w-40"
-                  defaultSelectedKeys={[classes()[0]?.key]}
+                  defaultSelectedKeys={[classes[0]?.key]}
                   name="academicClass"
                   onChange={handleSelect}
                 >
-                  {classes().map((data) => (
+                  {classes?.map((data) => (
                     <SelectItem key={data.key}>{data.label}</SelectItem>
                   ))}
                 </Select>
@@ -109,7 +108,6 @@ const FeeTableList: FC = () => {
                 {detailsType === 'group' ? (
                   <>
                     <TableColumn>Student name</TableColumn>
-                    <TableColumn>Annual fee</TableColumn>
                     <TableColumn>Amount paid</TableColumn>
                     <TableColumn>Amount Due</TableColumn>
                   </>
@@ -153,7 +151,6 @@ const FeeTableList: FC = () => {
                               </Link> */}
                               {/* <p className="text-xs">{fee.student.email} / {fee.student.userId}</p> */}
                             </TableCell>
-                            <TableCell>{annualFeeInfo?.annualFee}</TableCell>
                             <TableCell>{fee.totalAmount }</TableCell>
                             <TableCell>{getDueAmount(annualFeeInfo?.annualFee ?? 0, fee.totalAmount)}</TableCell>
                         </TableRow>
@@ -170,7 +167,7 @@ const FeeTableList: FC = () => {
                     })
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={detailsType === 'group' ? 4 : 3}>No records found!</TableCell>
+                    <TableCell colSpan={3}>No records found!</TableCell>
                   </TableRow>
                 )}
               </TableBody>

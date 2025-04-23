@@ -25,6 +25,7 @@ interface UsersState {
   classes: any[];
   subjectsClasses: any[];
   classTeachers: any[];
+  birthdays: any[];
 }
 
 // Initial state with TypeScript
@@ -42,7 +43,8 @@ const initialState: UsersState = {
   roleTypes: [],
   classes: [],
   subjectsClasses: [],
-  classTeachers: []
+  classTeachers: [],
+  birthdays: []
 };
 
 // Create slice with TypeScript
@@ -84,6 +86,7 @@ const usersSlice = createSlice({
       state.roleTypes = action.payload.roleTypes;
       state.classes = action.payload.classes;
       state.subjectsClasses = action.payload.subjects;
+      state.birthdays = action.payload.birthdays;
     },
     getPermissions: (state, action) => {
       state.permissionOptions = action.payload;

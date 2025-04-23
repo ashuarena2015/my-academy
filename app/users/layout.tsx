@@ -16,9 +16,6 @@ export default function UserLayout({
 
   return (
     <section>
-      <div>
-        <h2 className="text-2xl pb-4">Administration</h2>
-      </div>
       <div className="w-full">{children}</div>
     </section>
   );

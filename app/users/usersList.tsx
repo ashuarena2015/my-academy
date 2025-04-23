@@ -19,18 +19,7 @@ import {
 } from "@heroui/react";
 import { RootState } from "../api/store";
 
-import { staffs } from '../profile/common';
 import { useRouter } from "next/navigation";
-import AddNewUser from "../components/AddNewUserModal";
-
-export const columns = [
-  { name: "Name", uid: "name" },
-  { name: "Designation", uid: "designation" },
-  { name: "Email", uid: "email" },
-  { name: "Phone", uid: "phone" },
-  { name: "Address", uid: "address" },
-  { name: "Status", uid: "status" }
-];
 
 export interface UserType {
   id: number;
@@ -48,12 +37,7 @@ export interface UserType {
   designation: string;
 }
 
-interface UsersListProps {
-  userTypeProp: string; // Define the expected type for userTypeProp
-  noTableWrapper: boolean
-}
-
-const UsersList: React.FC<UsersListProps> = ({ userTypeProp, noTableWrapper }) => {
+const UsersList: React.FC = () => {
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -76,14 +60,14 @@ const UsersList: React.FC<UsersListProps> = ({ userTypeProp, noTableWrapper }) =
     }))
   );
 
-  const { roleTypes } = useSelector(state => state.users);
+  const { roleTypes } = useSelector((state: RootState) => state.users);
 
   interface UserFilter {
-    userType?: string;
+    designation?: string;
   }
   
   const [userFilter, setUserFilter] = useState<UserFilter>({
-    userType: "all"
+    designation: ""
   });
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target;
@@ -105,7 +89,7 @@ const UsersList: React.FC<UsersListProps> = ({ userTypeProp, noTableWrapper }) =
           dispatchType: "getAllUsers",
           body: {
             userAll: 1,
-            userType: userFilter?.userType,
+            designation: userFilter?.designation,
           }
         },
       });
@@ -116,21 +100,32 @@ const UsersList: React.FC<UsersListProps> = ({ userTypeProp, noTableWrapper }) =
       <span className="text-green-100">Active</span>
     </Chip>
   }
+
+  const getDesignation = (designation: string) => {
+    return (designation.replace("_", " ") || designation)?.toUpperCase();
+  }
+
+  const columns = [
+    { name: "Name", uid: "name" },
+    { name: "Phone", uid: "phone" },
+    { name: "Address", uid: "address" }
+  ];
+
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
         <Select
           className="w-48 mb-1"
-          label={userFilter?.userType || "Select type"}
-          labelPlacement=" "
-          name="userType"
+          // label={userFilter?.userType || "Select type"}
+          // labelPlacement=" "
+          placeholder="All"
+          name="designation"
           onChange={handleChange}
         >
           {roleTypes.map((data) => (
             <SelectItem key={data.key}>{data.label}</SelectItem>
           ))}
         </Select>
-        <AddNewUser title={'Add new staff'} userTypeForm="" />
       </div>
       <Table isHeaderSticky removeWrapper>
         <TableHeader columns={columns}>
@@ -146,7 +141,7 @@ const UsersList: React.FC<UsersListProps> = ({ userTypeProp, noTableWrapper }) =
         <TableBody>
           {!users?.length ? 
             <TableRow>
-              <TableCell colSpan={6}>No records found!</TableCell>
+              <TableCell colSpan={3}>No records found!</TableCell>
             </TableRow>
             : 
             users?.map((user: UserType, i) => {
@@ -156,23 +151,24 @@ const UsersList: React.FC<UsersListProps> = ({ userTypeProp, noTableWrapper }) =
                     <User
                       as="button"
                       avatarProps={{
-                        isBordered: true,
                         src: user?.profilePhoto ? `http://localhost:3001/uploads/${user?.profilePhoto}` : `http://localhost:3001/uploads/default-avatar.png`,
+                        className: 'min-w-14 min-h-14'
                       }}
                       className="text-left"
                       name={
-                        user?.firstName
-                          ? <p className="font-semibold">{user?.firstName} {user?.lastName}</p>
-                          : <p className="font-semibold">{user?.email}</p>
+                        <div>
+                          {user?.firstName
+                            ? <p style={{ maxWidth: '180px', whiteSpace: 'nowrap' }}>{user?.firstName} {user?.lastName}</p>
+                            : <p style={{ maxWidth: '180px', whiteSpace: 'nowrap' }}>{user?.email}</p>}
+                          <p className="text-xs text-default-400">{getDesignation(user.designation)}</p>
+                          <p className="text-xs text-default-400">{user.email}</p>
+                        </div>
                       }
                       onClick={() => router.push(`/users/${user.userId}`)}
                     />
                   </TableCell>
-                  <TableCell>{user.userType?.toUpperCase()}</TableCell>
-                  <TableCell>{user?.email}</TableCell>
                   <TableCell>{user.phone}</TableCell>
-                  <TableCell><address>{user.address}</address></TableCell>
-                  <TableCell>{getStatus(user.status)}</TableCell>
+                  <TableCell className="min-w-52">{user.address}</TableCell>
                 </TableRow>
               )  
             })

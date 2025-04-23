@@ -10,7 +10,7 @@ export const siteConfig = (loginUser: any) => {
         href: "/dashboard",
         icon: "Dashboard",
         iconColor: "bg-yellow-400",
-        isShow: loginUser?.userType !== 'student'
+        isShow: loginUser?.designation !== 'student'
       },
       {
         label: "Students",
@@ -24,37 +24,44 @@ export const siteConfig = (loginUser: any) => {
         href: "/fee",
         icon: "Students",
         iconColor: "bg-yellow-400",
-        isShow: loginUser?.userType !== 'student'
+        isShow: loginUser?.designation !== 'student'
       },
       {
         label: "Users",
         href: "/users",
         icon: "Users",
         iconColor: "bg-yellow-400",
-        isShow: loginUser?.userType !== 'student'
+        isShow: loginUser?.designation !== 'student'
       },
       {
         label: "Academics",
         href: "",
         icon: "Academics",
         iconColor: "bg-yellow-400",
-        isShow: loginUser?.userType !== 'student',
+        isShow: loginUser?.designation !== 'student',
         subMenu: [
           {
             label: "Class & Teachers",
             href: "/class-teachers",
             icon: "",
             iconColor: "bg-yellow-400",
-            isShow: loginUser?.userType !== 'student',
+            isShow: loginUser?.designation !== 'student',
           },
           {
             label: "Attendance",
             href: "/attendance",
             icon: "",
             iconColor: "bg-yellow-400",
-            isShow: loginUser?.userType !== 'student',
+            isShow: loginUser?.designation !== 'student',
           }
         ]
+      },
+      {
+        label: "Inbox",
+        href: "/inbox",
+        icon: "Inbox",
+        iconColor: "bg-yellow-400",
+        isShow: true
       },
       {
         label: "Blogs",

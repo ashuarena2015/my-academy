@@ -10,15 +10,6 @@ export const academicSessions = () => {
     ]
 }
 
-export const classes = () => {
-    return [
-        { key: "REC-A", label: "REC-A" },
-        { key: "REC-B", label: "REC-B" },
-        { key: "PP1-A", label: "PP1-A" },
-        { key: "PP1-B", label: "PP1-B" }
-    ]
-}
-
 export const gender = () => {
     return [
         { key: "Male", label: "Male" },

@@ -19,9 +19,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../api/store";
 import { academicSessions, gender } from './common';
 
-import ImageUploader from '../components/imageUploader/imageUploader';
-import IDCard from "./IdCard";
-
 const ProfileUpdateForm: FC = () => {
 
     const { roleTypes, currentUser, permissionOptions, classes } = useSelector((state: RootState) => state.users);
@@ -29,7 +26,31 @@ const ProfileUpdateForm: FC = () => {
 
     const dispatch = useDispatch<AppDispatch>();
 
-    const [userInputInfo, setUserInputInfo] = useState({});
+    interface UserInputInfo {
+      firstName?: string;
+      gender?: string;
+      lastName?: string;
+      email?: string;
+      address?: string;
+      dob?: string;
+      userType?: string;
+      phone?: string;
+      alternatePhone?: string;
+      fatherName?: string;
+      motherName?: string;
+      doa?: string;
+      admission_class?: string;
+      class_current?: string;
+      academic_session?: string;
+      adminRole?: string;
+      designation?: string;
+      adminPermissions?: string[];
+      [key: string]: string | string[] | undefined; // Index signature
+    }
+
+    type LoginUser = UserInputInfo; // Define LoginUser as an alias for UserInputInfo
+    
+    const [userInputInfo, setUserInputInfo] = useState<UserInputInfo>({});
 
   useEffect(() => {
       setUserInputInfo({
@@ -181,7 +202,7 @@ const ProfileUpdateForm: FC = () => {
   }
 
     return (
-      userInputInfo?.userType ? <>
+      userInputInfo?.designation ? <>
             <div className="col-span-2">
                 <Form validationBehavior="aria">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -210,7 +231,7 @@ const ProfileUpdateForm: FC = () => {
                                 <div className="flex justify-between w-full">
                                     {getInputField({ name: "address", errorMessage: "Please enter address", placeholder: "Enter your Address", type: "text", label: "Address", isDisabled: false })}
                                 </div>
-                                {userInputInfo?.userType !== 'student' ? <div>
+                                {userInputInfo?.designation !== 'student' ? <div>
                                   <CheckboxGroup
                                     color="primary"
                                     label={<div className="text-sm text-default-900">Select Permissions</div>}
@@ -223,7 +244,7 @@ const ProfileUpdateForm: FC = () => {
                                     })}
                                   </CheckboxGroup>
                                 </div> : null}
-                                {userInputInfo?.userType === 'student' ?
+                                {userInputInfo?.designation === 'student' ?
                                     <>
                                         <h2 className="font-bold mt-2">Academic details</h2>
                                         <hr className="w-full" />
@@ -239,7 +260,7 @@ const ProfileUpdateForm: FC = () => {
                             </div>
                         </div>
                         <div>
-                            {userInputInfo?.userType === 'student' ?
+                            {userInputInfo?.designation === 'student' ?
                                 (<>
                                     <h2 className="font-bold pb-2">Parent details</h2>
                                     <hr className="w-full" />
@@ -263,10 +284,6 @@ const ProfileUpdateForm: FC = () => {
                         </Link>
                     </div>
                 </Form>
-            </div>
-            <div className="col-span-1 ml-4">
-                <IDCard details={profileUser || []} />
-                <ImageUploader userId={profileUser?.userId || ""} btnTitle="change profile image" />
             </div>
         </>
     : null)

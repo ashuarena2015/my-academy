@@ -1,12 +1,29 @@
 import React from "react";
 import { Card, CardHeader, Avatar, Button } from "@heroui/react";
 import { useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/app/api/store";
+
+type UserCounter = {
+  students?: number;
+  staffs?: number;
+  teachers?: number;
+  admins?: number;
+  principals?: number;
+  head_principals?: number;
+  head_teachers?: number;
+};
 
 const UserCount = () => {
-  const { userCounter } = useSelector(
-    (state: { users: { userCounter: number } }) => state.users,
-    (prev, next) => prev === next
-  );
+  const { userCounter }: { userCounter: UserCounter } = useSelector((state: RootState) => state.users);
+  const {
+    students = 0,
+    staffs = 0,
+    teachers = 0,
+    admins = 0,
+    principals = 0,
+    head_principals = 0,
+    head_teachers = 0,
+  } = userCounter ?? {};
   return (
     <div className="gap-4 justify-between grid grid-cols-2">
       <Card className="">
@@ -42,7 +59,7 @@ const UserCount = () => {
                 Students
               </h4>
               <h5 className="text-small tracking-tight text-default-400">
-                {userCounter?.students || 0}
+                {students || 0}
               </h5>
             </div>
           </div>
@@ -84,7 +101,7 @@ const UserCount = () => {
                 Staffs
               </h4>
               <h5 className="text-small tracking-tight text-default-400">
-              {userCounter?.staffs + userCounter?.teachers + userCounter?.admins + userCounter?.principals}
+              {staffs + teachers + head_principals + principals + head_teachers}
               </h5>
             </div>
           </div>

@@ -16,7 +16,6 @@ import {
 
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
-import { classes } from "../profile/common";
 
 import { RootState, AppDispatch } from "../api/store";
 
@@ -28,10 +27,10 @@ interface AddNewUserProps {
 const AddNewUser: FC<AddNewUserProps> = ({ title, userTypeForm }) => {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
-  const { branches, roleTypes } = useSelector((state: RootState) => state.users);
+  const { branches, roleTypes, classes } = useSelector((state: RootState) => state.users);
 
   const [addUserInfo, setAddUserInfo] = useState({
-      userType: userTypeForm
+    designation: userTypeForm
   })
   
   const dispatch = useDispatch<AppDispatch>();
@@ -75,23 +74,21 @@ const AddNewUser: FC<AddNewUserProps> = ({ title, userTypeForm }) => {
               <DrawerHeader className="flex flex-col gap-1">{title}</DrawerHeader>
               <DrawerBody>
                   <Form className="gap-4">
-                      {userTypeForm === "student" ? (
-                        <>
-                          <Select className="w-full" name="branch" label="Select branch" labelPlacement="outside" placeholder="Select branch" onChange={handleChange}>
-                            {branches.map((list, index) => (
-                                <SelectItem key={list._id}>{list?.branch}</SelectItem>
-                            ))}
-                          </Select>
+                    <Select className="w-full" name="branch" label="Select branch" labelPlacement="outside" placeholder="Select branch" onChange={handleChange}>
+                      {branches.map((list, index) => (
+                          <SelectItem key={list._id}>{list?.branch}</SelectItem>
+                      ))}
+                    </Select>
+                      {userTypeForm === "student" ? 
                           <Select className="w-full" name="class_current" label="Select class" labelPlacement="outside" placeholder="Select class" onChange={handleChange}>
-                            {classes().map((classItem) => (
+                            {classes?.map((classItem) => (
                                 <SelectItem key={classItem.key} textValue={classItem.label}>
                                     {classItem.label}
                                 </SelectItem>
                             ))}
                           </Select>
-                        </>)
                       :
-                      <Select className="w-full" name="userType" label="Select role" labelPlacement="outside" placeholder="Select role" onChange={handleChange}>
+                      <Select className="w-full" name="designation" label="Select designation" labelPlacement="outside" placeholder="Select designation" onChange={handleChange}>
                           {roleTypes.map((role, index) => (
                               <SelectItem key={role.key}>{role?.label}</SelectItem>
                           ))}
@@ -129,7 +126,7 @@ const AddNewUser: FC<AddNewUserProps> = ({ title, userTypeForm }) => {
                   Close
                 </Button>
                 <Button color="primary" onClick={handleSubmit}>
-                  Action
+                  Save
                 </Button>
               </DrawerFooter>
             </>

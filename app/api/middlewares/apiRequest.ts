@@ -122,7 +122,7 @@ const api =
         });
         return true;
       }
-      if(dispatchType === "getStudentAttendance") {
+      if(dispatchType === "getStudentAttendance" || dispatchType === "setStudentAttendance") {
         return {
           data: response?.data?.attendanceInfo
         }
@@ -142,6 +142,7 @@ const api =
         return true;
       }
       if(dispatchType === "adminInfo") {
+        console.log('response?.data', response?.data);
         dispatch({
           type: "users/adminInfo",
           payload: {
@@ -151,6 +152,7 @@ const api =
             roleTypes: response?.data?.adminRoles,
             classes: response?.data?.classes,
             subjects: response?.data?.subjects,
+            birthdays: response?.data?.getBirthDayInMonth,
           }
         });
         return true;

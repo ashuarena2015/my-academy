@@ -21,7 +21,7 @@ const sharp = require("sharp");
 
 routerUsers.post("/", async (req, res) => {
     try {
-        const { class_current, userAll, userType } = req.body;
+        const { class_current, userAll, designation } = req.body;
 
         if (!class_current && !userAll) {
             return res.status(400).json({ error: "Class is required" });
@@ -31,9 +31,15 @@ routerUsers.post("/", async (req, res) => {
         let students = [];
 
         if (userAll) {
-            // Get non-students
-            users = await User.find({ userType: userType === 'all' ? { $ne: 'student' } : userType })
-                              .populate("class_current"); // Adjust as needed
+            const query = designation
+            ? { designation }
+            : {
+                designation: {
+                    $nin: ['', null, 'student'],
+                    $exists: true
+                }
+            };
+            users = await User.find(query);
         } else {
             // Get both students and non-students of a specific class
             const all = await User.find({ class_current })
@@ -66,15 +72,15 @@ routerUsers.get('/auth', verifyToken, async (req, res) => {
 })
 
 // Generate Unique Student ID
-const generateUserId = async (userType) => {
+const generateUserId = async (designation) => {
     const lastUser = await UserRegister.findOne().sort({ createdAt: -1 });
     const lastId = lastUser ? parseInt(lastUser.userId.slice(3)) : 0;
-    return userType === 'student' ? `STU${lastId + 1}` : `ADM${lastId + 1}`;
+    return designation === '' ? `STU${lastId + 1}` : `ADM${lastId + 1}`;
 };
 
 routerUsers.post("/register", async (req, res) => {
     try {
-        const { password, email, userType, ...props } = req.body.userInfo;
+        const { password, email, designation, ...props } = req.body.userInfo;
         if (!password || !email) {
             return res.status(400).json({ error: "Name and Email are required" });
         }
@@ -84,13 +90,13 @@ routerUsers.post("/register", async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         // Generate Student ID
-        const userId = await generateUserId(userType);
+        const userId = await generateUserId(designation);
         // 🔹 Create and Save Student
         const newUser = new UserRegister({
             password: hashedPassword,
             email,
             userId,
-            userType,
+            designation,
             ...props
         });
         await newUser.save();
@@ -231,28 +237,62 @@ routerUsers.get("/adminInfo", async (req, res) => {
         const permissions = await AdminPermission.find({});
         const userCounter = await User.aggregate([
             {
+              $match: {
+                designation: { $ne: null, $ne: "", $exists: true }
+              }
+            },
+            {
               $group: {
-                _id: "$userType",
+                _id: "$designation",
                 count: { $sum: 1 }
               }
             }
         ]);
+
+        const month = new Date().getMonth() + 1;
+        const formattedMonth = month.toString().padStart(2, '0');
+
+        const getBirthDayInMonth = await User.aggregate([
+            {
+              $addFields: {
+                month: { $substr: ["$dob", 3, 2] }
+              }
+            },
+            {
+              $match: {
+                month: formattedMonth
+              }
+            },
+            {
+                $project: {
+                  firstName: 1,
+                  lastName: 1,
+                  class_current: 1,
+                  profilePhoto: 1,
+                  userType: 1,
+                  designation: 1,
+                  dob: 1,
+                  _id: 0 // Exclude _id field if not needed
+                }
+            }
+          ]);
         const counter = {};
 
         userCounter.forEach(({ _id, count }) => {
             // Pluralize if needed
-            const key = _id.endsWith('s') ? _id : _id + 's';
+            const key = _id?.endsWith('s') ? _id : _id + 's';
             counter[key] = count;
         });
 
-        Promise.all([permissions, userCounter, branches, adminRoles, classes, subjects ]).then(() => {
+        Promise.all([permissions, userCounter, branches, adminRoles, classes, subjects, getBirthDayInMonth ]).then(() => {
             res.json({
                 permissions: permissions[0]?.permissions,
                 counter,
                 branches,
                 adminRoles: adminRoles[0].roles,
                 classes: classes[0].classes,
-                subjects: subjects[0]?.subjectClass
+                subjects: subjects[0]?.subjectClass,
+                getBirthDayInMonth: getBirthDayInMonth
             });
         });
     } catch (error) {
@@ -322,7 +362,7 @@ routerUsers.route("/attendance")
                   setDefaultsOnInsert: true // Apply default values on insert
                 }
             );              
-            res.status(201).json({ message: "Attendance marked successfully!", response });
+            res.status(201).json({ message: "Attendance marked successfully!", attendanceInfo: [response] });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -345,6 +385,12 @@ routerUsers.route("/attendance")
             res.status(500).json({ error: error.message });
         }
     })
+
+routerUsers.get("/logout", (req, res) => {
+    console.log("Logout route hit");
+    res.clearCookie("auth", { httpOnly: true, secure: true, sameSite: "Strict" });
+    return res.json({ message: "Logged out successfully" });
+});
 
 routerUsers.get("/:id", async (req, res) => {
     try {
@@ -412,12 +458,6 @@ routerUsers.get("/:id", async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-});
-
-
-routerUsers.get("/logout", (req, res) => {
-    res.clearCookie("auth", { httpOnly: true, secure: true, sameSite: "Strict" });
-    return res.json({ message: "Logged out successfully" });
 });
 
 module.exports = { routerUsers };
